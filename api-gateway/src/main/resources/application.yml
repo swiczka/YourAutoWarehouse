@@ -1,0 +1,25 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+  main:
+    web-application-type: reactive
+  cloud:
+    gateway:
+      server:
+        webflux:
+          routes:
+            - id: order
+              predicates:
+                - Path=/api/order/**,/api/order
+              uri: http://localhost:8081
+            - id: warehouse
+              predicates:
+                - Path=/api/warehouse/**,/api/warehouse
+              uri: http://localhost:8082
+            - id: forklift
+              predicates:
+                - Path=/api/forklift/**,/api/forklift
+              uri: http://localhost:8083
