@@ -1,0 +1,65 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: yaw-postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_ADMIN_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_ADMIN_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_WAREHOUSE_NAME} #default db required by image
+
+      POSTGRES_WAREHOUSE_USER: ${POSTGRES_WAREHOUSE_USER}
+      POSTGRES_WAREHOUSE_PASSWORD: ${POSTGRES_WAREHOUSE_PASSWORD}
+
+      POSTGRES_FORKLIFT_NAME: ${POSTGRES_FORKLIFT_NAME}
+      POSTGRES_FORKLIFT_USER: ${POSTGRES_FORKLIFT_USER}
+      POSTGRES_FORKLIFT_PASSWORD: ${POSTGRES_FORKLIFT_PASSWORD}
+
+      POSTGRES_ORDER_NAME: ${POSTGRES_ORDER_NAME}
+      POSTGRES_ORDER_USER: ${POSTGRES_ORDER_USER}
+      POSTGRES_ORDER_PASSWORD: ${POSTGRES_ORDER_PASSWORD}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./init-scripts:/docker-entrypoint-initdb.d # Skrypt inicjalizacyjny - tworzy pozostałe bazy
+    ports:
+      - "5432:5432"
+    networks:
+      - yaw-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_ADMIN_USER} -d ${POSTGRES_WAREHOUSE_NAME}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+  api-gateway:
+    container_name: api-gateway
+    build:
+      context: .
+      dockerfile: api-gateway/Dockerfile
+    image: api-gateway:latest
+    ports:
+      - "8080:8080"
+    networks:
+      - yaw-network
+  api-warehouse:
+    container_name: api-warehouse
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DB_HOST: postgres
+      POSTGRES_WAREHOUSE_NAME: ${POSTGRES_WAREHOUSE_NAME}
+      POSTGRES_WAREHOUSE_USER: ${POSTGRES_WAREHOUSE_USER}
+      POSTGRES_WAREHOUSE_PASSWORD: ${POSTGRES_WAREHOUSE_PASSWORD}
+    build:
+      context: .
+      dockerfile: api-warehouse/Dockerfile
+    image: api-warehouse:latest
+    ports:
+      - "8082:8082"
+    networks:
+      - yaw-network
+volumes:
+  postgres-data:
+
+networks:
+  yaw-network:
+    driver: bridge

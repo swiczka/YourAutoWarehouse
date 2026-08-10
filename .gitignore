@@ -31,3 +31,6 @@ build/
 
 ### VS Code ###
 .vscode/
+
+.env
+/api-warehouse/src/main/resources/application-local.properties

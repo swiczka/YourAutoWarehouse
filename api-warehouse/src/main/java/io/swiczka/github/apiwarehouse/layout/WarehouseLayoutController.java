@@ -9,11 +9,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/warehouse")
 public class WarehouseLayoutController {
 
-    @GetMapping("/")
-    public ResponseEntity<String> health(){
-        return ResponseEntity.ok("ok");
-    }
-
     @PostMapping("/new")
     public ResponseEntity<LayoutResponseDTO> setNewLayout(@RequestBody LayoutDTO[] layout){
         LayoutResponseDTO responseDTO = new LayoutResponseDTO("Success", layout.length);
