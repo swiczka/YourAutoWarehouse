@@ -1,6 +1,6 @@
 package io.swiczka.github.apiwarehouse.layout.dto;
 
-public record LayoutResponseDTO(
+public record LayoutResponseDto(
     String message,
     int count
 ) { }
