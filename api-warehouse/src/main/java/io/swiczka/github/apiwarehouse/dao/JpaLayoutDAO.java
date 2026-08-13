@@ -2,11 +2,12 @@ package io.swiczka.github.apiwarehouse.dao;
 
 import io.swiczka.github.apiwarehouse.entity.Layout;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.TypedQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
@@ -26,17 +27,13 @@ public class JpaLayoutDAO implements LayoutDAO{
     }
 
     @Override
-    public Layout findByUserId(UUID userId) {
-        TypedQuery<Layout> query = entityManager.createQuery(
+    public Optional<Layout> findByUserId(UUID userId) {
+        List<Layout> layouts = entityManager.createQuery(
                 "FROM Layout WHERE userId = :userId " +
                         "ORDER BY createdAt DESC", Layout.class)
-                .setParameter("userId", userId);
-        try {
-            Layout latestLayout = query.getResultList().getFirst();
-            return latestLayout;
-        } catch (Exception e) {
-            return null;
-        }
-
+                .setParameter("userId", userId)
+                .setMaxResults(1)
+                .getResultList();
+        return layouts.isEmpty() ? Optional.empty() : Optional.of(layouts.getFirst());
     }
 }

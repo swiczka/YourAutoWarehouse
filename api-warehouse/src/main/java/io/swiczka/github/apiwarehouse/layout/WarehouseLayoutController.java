@@ -20,7 +20,7 @@ public class WarehouseLayoutController {
         this.layoutService = layoutService;
     }
 
-    @PostMapping("/new")
+    @PostMapping("/layout")
     public ResponseEntity<LayoutResponseDto> setNewLayout(@RequestBody List<GridDataDto> layout){
         layoutService.saveNewLayout(layout);
         LayoutResponseDto responseDTO = new LayoutResponseDto("Success", layout.size());

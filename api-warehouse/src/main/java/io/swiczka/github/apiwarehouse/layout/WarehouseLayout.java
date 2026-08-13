@@ -1,7 +1,5 @@
 package io.swiczka.github.apiwarehouse.layout;
 
-
-import io.swiczka.github.apiwarehouse.layout.helpers.Coordinate;
 import io.swiczka.github.apiwarehouse.layout.helpers.RoadCell;
 
 import java.util.Map;

@@ -38,5 +38,6 @@
         <module>api-forklift</module>
         <module>api-order</module>
         <module>api-warehouse</module>
+        <module>shared-common</module>
     </modules>
 </project>

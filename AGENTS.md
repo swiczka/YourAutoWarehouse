@@ -62,13 +62,6 @@ Fronted algorithm works in such way that it puts shelf in any cell neighboring a
 - Prefer early returns.
 - Avoid else statements when not necessary and try early returns.
 
-## Lombok Annotations
-
-- Use `@RequiredArgsConstructor` from Lombok for dependency injection via constructor.
-- Use `@Slf4j` from Lombok for logging.
-- Use `@Builder(setterPrefix = "with"))` for complex object creation.
-- Avoid `@Data` annotation; prefer `@Getter` and `@Setter` for granular control.
-
 ## Annotations
 
 - **`@Service`**: For business logic classes.

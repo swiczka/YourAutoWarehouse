@@ -57,6 +57,24 @@ services:
       - "8082:8082"
     networks:
       - yaw-network
+  api-order:
+    container_name: api-order
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DB_HOST: postgres
+      POSTGRES_ORDER_NAME: ${POSTGRES_ORDER_NAME}
+      POSTGRES_ORDER_USER: ${POSTGRES_ORDER_USER}
+      POSTGRES_ORDER_PASSWORD: ${POSTGRES_ORDER_PASSWORD}
+    build:
+      context: .
+      dockerfile: api-order/Dockerfile
+    image: api-order:latest
+    ports:
+      - "8081:8081"
+    networks:
+      - yaw-network
 volumes:
   postgres-data:
 

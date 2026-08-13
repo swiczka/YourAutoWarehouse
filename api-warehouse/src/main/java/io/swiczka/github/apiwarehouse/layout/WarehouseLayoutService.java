@@ -30,10 +30,9 @@ public class WarehouseLayoutService {
     }
 
     public List<GridDataDto> getUserLayout(UUID userId){
-        Layout layout = layoutDAO.findByUserId(userId);
-        if(layout == null){
-            return null;
-        }
+        Layout layout = layoutDAO.findByUserId(userId)
+                .orElseThrow();
+
         List<GridData> gridData = layout.getGridData();
         List<GridDataDto> gridDataDto = gridData.stream()
                 .map(GridDataMapper::toDto)
