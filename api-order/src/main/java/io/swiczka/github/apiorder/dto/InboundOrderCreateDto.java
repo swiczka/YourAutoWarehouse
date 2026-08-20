@@ -1,5 +1,6 @@
 package io.swiczka.github.apiorder.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
@@ -15,5 +16,5 @@ public record InboundOrderCreateDto(
         Long companyId, //company that owns packages
 
         @Size(min = 1, max = 15, message = "There must be 1-15 packages provided")
-        List<String> packageNames //list size equals order size
+        List<@NotBlank String> packageNames //list size equals order size
 ) { }

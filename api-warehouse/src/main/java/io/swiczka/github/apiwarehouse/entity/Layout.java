@@ -1,7 +1,6 @@
 package io.swiczka.github.apiwarehouse.entity;
 
 import io.swiczka.github.apiwarehouse.domain.GridData;
-import io.swiczka.github.apiwarehouse.layout.dto.GridDataDto;
 import jakarta.persistence.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
@@ -24,6 +23,9 @@ public class Layout {
     @Column(name="created_at")
     private Instant createdAt;
 
+    @Column(name="forklift_number")
+    private Integer forkliftNumber;
+
     @Column(name = "grid_data", columnDefinition = "jsonb")
     @JdbcTypeCode(SqlTypes.JSON)
     private List<GridData> gridData;
@@ -31,10 +33,19 @@ public class Layout {
     public Layout() {
     }
 
-    public Layout(UUID userId, Instant createdAt, List<GridData> gridData) {
+    public Layout(UUID userId, Instant createdAt, Integer forkliftNumber, List<GridData> gridData) {
         this.userId = userId;
         this.createdAt = createdAt;
+        this.forkliftNumber = forkliftNumber;
         this.gridData = gridData;
+    }
+
+    public Integer getForkliftNumber() {
+        return forkliftNumber;
+    }
+
+    public void setForkliftNumber(Integer forkliftNumber) {
+        this.forkliftNumber = forkliftNumber;
     }
 
     public void setId(Long id) {

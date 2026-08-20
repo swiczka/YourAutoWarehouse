@@ -75,6 +75,12 @@ services:
       - "8081:8081"
     networks:
       - yaw-network
+  shared-common:
+    container_name: shared_common
+    build:
+      context: .
+      dockerfile: shared-common/Dockerfile
+    image: shared-common:latest
 volumes:
   postgres-data:
 

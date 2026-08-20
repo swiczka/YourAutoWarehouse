@@ -4,7 +4,6 @@ import io.swiczka.github.apiwarehouse.entity.Layout;
 import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -21,9 +20,13 @@ public class JpaLayoutDAO implements LayoutDAO{
     }
 
     @Override
-    @Transactional //spring.framework transactional
     public void save(Layout layout) {
-        entityManager.persist(layout);
+        entityManager.merge(layout);
+    }
+
+    @Override
+    public Optional<Layout> findById(Long id) {
+        return Optional.of(entityManager.find(Layout.class, id));
     }
 
     @Override

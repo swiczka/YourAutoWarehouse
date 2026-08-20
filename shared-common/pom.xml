@@ -9,16 +9,24 @@
     </parent>
     <artifactId>shared-common</artifactId>
     <packaging>jar</packaging>
-
     <name>shared-common</name>
-    <description>shared-common</description>
 
-    <properties>
-        <java.version>26</java.version>
-    </properties>
     <dependencies>
-
+        <dependency>
+            <groupId>jakarta.validation</groupId>
+            <artifactId>jakarta.validation-api</artifactId>
+        </dependency>
     </dependencies>
 
-
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

@@ -1,0 +1,1 @@
+ALTER TABLE Layouts ADD COLUMN forklift_number INT NOT NULL DEFAULT 5;

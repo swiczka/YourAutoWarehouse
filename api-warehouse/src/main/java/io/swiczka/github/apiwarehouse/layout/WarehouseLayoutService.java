@@ -3,10 +3,14 @@ package io.swiczka.github.apiwarehouse.layout;
 import io.swiczka.github.apiwarehouse.dao.LayoutDAO;
 import io.swiczka.github.apiwarehouse.domain.GridData;
 import io.swiczka.github.apiwarehouse.entity.Layout;
+import io.swiczka.github.apiwarehouse.exceptions.LayoutNotFoundException;
 import io.swiczka.github.apiwarehouse.layout.dto.GridDataDto;
+import io.swiczka.github.apiwarehouse.layout.response.LayoutReadResponse;
 import io.swiczka.github.apiwarehouse.mapper.GridDataMapper;
+import io.swiczka.github.apiwarehouse.mapper.LayoutMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.List;
@@ -21,22 +25,28 @@ public class WarehouseLayoutService {
         this.layoutDAO = layoutDAO;
     }
 
-    public void saveNewLayout(List<GridDataDto> gridDataDto){
+    @Transactional //spring.framework transactional
+    public LayoutReadResponse saveNewLayout(List<GridDataDto> gridDataDto){
         List<GridData> gridData = gridDataDto.stream()
                 .map(GridDataMapper::toDomain)
                 .toList();
-        Layout newLayout = new Layout(UUID.randomUUID(), Instant.now(), gridData);
+        Layout newLayout = new Layout(UUID.randomUUID(), Instant.now(), 5, gridData);
         layoutDAO.save(newLayout);
+        return LayoutMapper.toDto(newLayout);
     }
 
-    public List<GridDataDto> getUserLayout(UUID userId){
+    public LayoutReadResponse getUserLayout(UUID userId){
         Layout layout = layoutDAO.findByUserId(userId)
-                .orElseThrow();
+                .orElseThrow(() -> new LayoutNotFoundException(userId));
+        return LayoutMapper.toDto(layout);
+    }
 
-        List<GridData> gridData = layout.getGridData();
-        List<GridDataDto> gridDataDto = gridData.stream()
-                .map(GridDataMapper::toDto)
-                .toList();
-        return gridDataDto;
+    @Transactional
+    public LayoutReadResponse updateForkliftNumber(Long layoutId, int forkliftNumber){
+        Layout layout = layoutDAO.findById(layoutId)
+                .orElseThrow(() -> new LayoutNotFoundException(layoutId));
+        layout.setForkliftNumber(forkliftNumber);
+        layoutDAO.save(layout);
+        return LayoutMapper.toDto(layout);
     }
 }

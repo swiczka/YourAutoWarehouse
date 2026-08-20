@@ -1,9 +1,8 @@
 package io.swiczka.github.apiwarehouse.layout;
 
 import io.swiczka.github.apiwarehouse.layout.dto.GridDataDto;
-import io.swiczka.github.apiwarehouse.layout.dto.LayoutResponseDto;
+import io.swiczka.github.apiwarehouse.layout.response.LayoutReadResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,16 +20,20 @@ public class WarehouseLayoutController {
     }
 
     @PostMapping("/layout")
-    public ResponseEntity<LayoutResponseDto> setNewLayout(@RequestBody List<GridDataDto> layout){
-        layoutService.saveNewLayout(layout);
-        LayoutResponseDto responseDTO = new LayoutResponseDto("Success", layout.size());
-        return ResponseEntity.ok(responseDTO);
+    public LayoutReadResponse setNewLayout(@RequestBody List<GridDataDto> layout){
+        return layoutService.saveNewLayout(layout);
     }
 
     @GetMapping("/layout")
-    public ResponseEntity<List<GridDataDto>> getUserLayout(@RequestParam UUID userId){
-        List<GridDataDto> gridData = layoutService.getUserLayout(userId);
-        ResponseEntity<List<GridDataDto>> resp = ResponseEntity.ok(gridData);
-        return resp;
+    public LayoutReadResponse getUserLayout(@RequestHeader("X-Guest-Id") final UUID guestId){
+        return layoutService.getUserLayout(guestId);
+    }
+
+    @PatchMapping("/{id}/forklift")
+    public LayoutReadResponse setForkliftNumber(
+            @PathVariable Long id,
+            @RequestParam int forkliftNumber
+          ){
+        return layoutService.updateForkliftNumber(id, forkliftNumber);
     }
 }
