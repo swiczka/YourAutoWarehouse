@@ -26,11 +26,11 @@ public class WarehouseLayoutService {
     }
 
     @Transactional //spring.framework transactional
-    public LayoutReadResponse saveNewLayout(List<GridDataDto> gridDataDto){
+    public LayoutReadResponse saveNewLayout(List<GridDataDto> gridDataDto, UUID operatorId){
         List<GridData> gridData = gridDataDto.stream()
                 .map(GridDataMapper::toDomain)
                 .toList();
-        Layout newLayout = new Layout(UUID.randomUUID(), Instant.now(), 5, gridData);
+        Layout newLayout = new Layout(operatorId, Instant.now(), 5, gridData);
         layoutDAO.save(newLayout);
         return LayoutMapper.toDto(newLayout);
     }
@@ -49,4 +49,5 @@ public class WarehouseLayoutService {
         layoutDAO.save(layout);
         return LayoutMapper.toDto(layout);
     }
+
 }

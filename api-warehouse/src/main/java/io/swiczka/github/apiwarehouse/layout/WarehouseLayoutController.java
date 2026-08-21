@@ -20,8 +20,9 @@ public class WarehouseLayoutController {
     }
 
     @PostMapping("/layout")
-    public LayoutReadResponse setNewLayout(@RequestBody List<GridDataDto> layout){
-        return layoutService.saveNewLayout(layout);
+    public LayoutReadResponse setNewLayout(@RequestBody List<GridDataDto> layout,
+                                           @RequestHeader("X-Guest-Id") UUID guestId){
+        return layoutService.saveNewLayout(layout, guestId);
     }
 
     @GetMapping("/layout")
