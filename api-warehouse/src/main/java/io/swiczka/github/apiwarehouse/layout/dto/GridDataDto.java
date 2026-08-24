@@ -12,7 +12,7 @@ import org.hibernate.validator.constraints.UniqueElements;
 public record GridDataDto(
         @Size(min = 0, max = 4)
         @UniqueElements(message = "Directions must be unique")
-        Set<@NotNull(message = "Direction cannot be null") Direction> allowedDirections,
+        @Valid Set<@NotNull(message = "Direction cannot be null") Direction> allowedDirections,
 
         @Valid Coordinate coordinates,
 

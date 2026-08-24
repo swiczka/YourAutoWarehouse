@@ -2,7 +2,10 @@ package io.swiczka.github.apiwarehouse.layout;
 
 import io.swiczka.github.apiwarehouse.layout.dto.GridDataDto;
 import io.swiczka.github.apiwarehouse.layout.response.LayoutReadResponse;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -10,6 +13,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/warehouse")
+@Validated
 public class WarehouseLayoutController {
 
     private final WarehouseLayoutService layoutService;
@@ -33,7 +37,10 @@ public class WarehouseLayoutController {
     @PatchMapping("/{id}/forklift")
     public LayoutReadResponse setForkliftNumber(
             @PathVariable Long id,
-            @RequestParam int forkliftNumber
+            @RequestParam
+                @Min(value = 1, message = "Forklift number must be between 1 and 12")
+                @Max(value = 12, message = "Forklift number must be between 1 and 12")
+            int forkliftNumber
           ){
         return layoutService.updateForkliftNumber(id, forkliftNumber);
     }

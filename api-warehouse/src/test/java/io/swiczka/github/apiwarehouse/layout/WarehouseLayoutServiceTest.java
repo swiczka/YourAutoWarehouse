@@ -67,24 +67,6 @@ class WarehouseLayoutServiceTest {
         );
     }
 
-    private LayoutReadResponse createTestResponse() {
-        GridDataDto gridDataDto = new GridDataDto(
-                Set.of(Direction.UP, Direction.RIGHT),
-                new Coordinate(0, 1),
-                false,
-                true
-        );
-
-        return new LayoutReadResponse(
-                1L,
-                TEST_USER_ID,
-                Instant.parse("2026-08-20T10:00:00Z"),
-                5,
-                List.of(gridDataDto)
-        );
-    }
-
-
     @Nested
     @DisplayName("Save layout using DAO")
     class SaveNewLayout {
