@@ -35,10 +35,16 @@ public class WarehouseLayoutService {
         return LayoutMapper.toDto(newLayout);
     }
 
-    public LayoutReadResponse getUserLayout(UUID userId){
-        Layout layout = layoutDAO.findByUserId(userId)
+    public LayoutReadResponse getUserLayout(final UUID userId) {
+        return layoutDAO.findByUserId(userId)
+                .map(LayoutMapper::toDto)
                 .orElseThrow(() -> new LayoutNotFoundException(userId));
-        return LayoutMapper.toDto(layout);
+    }
+
+    public LayoutReadResponse getLayoutById(final Long layoutId) {
+        return layoutDAO.findById(layoutId)
+                .map(LayoutMapper::toDto)
+                .orElseThrow(() -> new LayoutNotFoundException(layoutId));
     }
 
     @Transactional

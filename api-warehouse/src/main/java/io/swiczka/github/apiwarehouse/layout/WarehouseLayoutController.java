@@ -1,5 +1,6 @@
 package io.swiczka.github.apiwarehouse.layout;
 
+import io.swiczka.github.apiwarehouse.exceptions.ForbiddenException;
 import io.swiczka.github.apiwarehouse.layout.dto.GridDataDto;
 import io.swiczka.github.apiwarehouse.layout.response.LayoutReadResponse;
 import jakarta.validation.constraints.Max;
@@ -30,8 +31,19 @@ public class WarehouseLayoutController {
     }
 
     @GetMapping("/layout")
-    public LayoutReadResponse getUserLayout(@RequestHeader("X-Guest-Id") final UUID guestId){
+    public LayoutReadResponse getUserLayout(@RequestHeader("X-Guest-Id") final UUID guestId) {
         return layoutService.getUserLayout(guestId);
+    }
+
+    @GetMapping("/layout/{id}")
+    public LayoutReadResponse getLayoutById(@PathVariable final Long id,
+                                            @RequestHeader("X-Guest-Id") final UUID guestId) {
+        final LayoutReadResponse layout = layoutService.getLayoutById(id);
+        final boolean isOwner = layout.userId().equals(guestId);
+        if (!isOwner)
+            throw new ForbiddenException("Access denied to layout with id " + id);
+
+        return layout;
     }
 
     @PatchMapping("/{id}/forklift")
