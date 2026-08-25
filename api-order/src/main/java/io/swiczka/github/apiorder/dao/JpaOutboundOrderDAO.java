@@ -5,6 +5,9 @@ import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+import java.util.UUID;
+
 @Repository
 public class JpaOutboundOrderDAO implements OutboundOrderDAO{
 
@@ -18,5 +21,14 @@ public class JpaOutboundOrderDAO implements OutboundOrderDAO{
     @Override
     public void save(OutboundOrder order) {
         entityManager.persist(order);
+    }
+
+    @Override
+    public List<OutboundOrder> getOutboundByUser(UUID userId) {
+        List<OutboundOrder> orders = entityManager.createQuery(
+                        "FROM OutboundOrder io WHERE io.operatorId=:userId", OutboundOrder.class)
+                .setParameter("userId", userId)
+                .getResultList();
+        return orders;
     }
 }

@@ -1,11 +1,16 @@
 package io.swiczka.github.apiorder.mapper;
 
-import io.swiczka.github.apiorder.dto.InboundOrderReadDto;
 import io.swiczka.github.apiorder.entity.InboundOrder;
+import io.swiczka.github.apiorder.response.InboundOrderResponse;
 
 public class InboundOrderMapper {
-    public static InboundOrderReadDto toDto(InboundOrder order){
-        return new InboundOrderReadDto(
+    private InboundOrderMapper() {
+    }
+
+    public static InboundOrderResponse toDto(final InboundOrder order){
+        if(order == null) return null;
+
+        return new InboundOrderResponse(
                 order.getId(),
                 order.getOperatorId(),
                 order.getCreatedAt(),

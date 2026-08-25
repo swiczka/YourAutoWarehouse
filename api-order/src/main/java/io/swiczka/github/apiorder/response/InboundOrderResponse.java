@@ -1,5 +1,8 @@
 package io.swiczka.github.apiorder.response;
 
+import io.swiczka.github.apiorder.enums.InboundOrderStatus;
+
+import java.time.Instant;
 import java.util.UUID;
 
 public record InboundOrderResponse(
@@ -7,7 +10,9 @@ public record InboundOrderResponse(
 
         UUID operatorId, //related to browser userId
 
+        Instant createdAt,
+
         Long companyId, //company that owns packages
 
-        int packageCount
+        InboundOrderStatus status
 ) {}

@@ -3,10 +3,13 @@ package io.swiczka.github.apiorder;
 import io.swiczka.github.apiorder.dao.InboundOrderDAO;
 import io.swiczka.github.apiorder.dao.OutboundOrderDAO;
 import io.swiczka.github.apiorder.dto.InboundOrderCreateDto;
-import io.swiczka.github.apiorder.dto.InboundOrderReadDto;
+import io.swiczka.github.apiorder.dto.OutboundOrderCreateDto;
 import io.swiczka.github.apiorder.entity.InboundOrder;
+import io.swiczka.github.apiorder.entity.OutboundOrder;
 import io.swiczka.github.apiorder.enums.InboundOrderStatus;
+import io.swiczka.github.apiorder.enums.OutboundOrderStatus;
 import io.swiczka.github.apiorder.response.InboundOrderResponse;
+import io.swiczka.github.apiorder.response.OutboundOrderResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -40,14 +43,17 @@ class OrderServiceTest {
     private static final UUID TEST_OPERATOR_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");
     private static final Long TEST_COMPANY_ID = 42L;
     private static final Long TEST_ORDER_ID = 1L;
+    private static final Instant TEST_TIME = Instant.parse("2026-08-20T10:00:00Z");
 
-    private InboundOrderCreateDto testCreateDto;
+    private InboundOrderCreateDto testInboundCreateDto;
     private InboundOrder testInboundOrder;
+
+    private OutboundOrderCreateDto testOutboundCreateDto;
+    private OutboundOrder testOutboundOrder;
 
     @BeforeEach
     void setUp() {
-        testCreateDto = new InboundOrderCreateDto(
-                TEST_OPERATOR_ID,
+        testInboundCreateDto = new InboundOrderCreateDto(
                 TEST_COMPANY_ID,
                 List.of("Package-A", "Package-B")
         );
@@ -55,10 +61,23 @@ class OrderServiceTest {
         testInboundOrder = new InboundOrder(
                 TEST_OPERATOR_ID,
                 TEST_COMPANY_ID,
-                Instant.parse("2026-08-20T10:00:00Z"),
+                TEST_TIME,
                 InboundOrderStatus.PENDING
         );
         testInboundOrder.setId(TEST_ORDER_ID);
+
+        testOutboundCreateDto = new OutboundOrderCreateDto(
+                TEST_COMPANY_ID,
+                List.of(1, 2)
+        );
+
+        testOutboundOrder = new OutboundOrder(
+                TEST_OPERATOR_ID,
+                TEST_COMPANY_ID,
+                TEST_TIME,
+                OutboundOrderStatus.PENDING
+        );
+        testOutboundOrder.setId(TEST_ORDER_ID);
     }
 
     @Nested
@@ -66,17 +85,17 @@ class OrderServiceTest {
     class AddInboundOrder {
 
         @Test
-        @DisplayName("Should save new inbound order and return response with correct package count")
+        @DisplayName("Should save new inbound order and return response")
         void addInboundOrder_ok() {
             // given
-            ArgumentCaptor<InboundOrder> orderCaptor = ArgumentCaptor.forClass(InboundOrder.class);
+            final ArgumentCaptor<InboundOrder> orderCaptor = ArgumentCaptor.forClass(InboundOrder.class);
 
             // when
-            InboundOrderResponse response = orderService.addInboundOrder(testCreateDto);
+            final InboundOrderResponse response = orderService.addInboundOrder(testInboundCreateDto, TEST_OPERATOR_ID);
 
             // then - what went to DAO
             verify(inboundDAO).save(orderCaptor.capture());
-            InboundOrder savedEntity = orderCaptor.getValue();
+            final InboundOrder savedEntity = orderCaptor.getValue();
 
             assertThat(savedEntity.getOperatorId()).isEqualTo(TEST_OPERATOR_ID);
             assertThat(savedEntity.getCompanyId()).isEqualTo(TEST_COMPANY_ID);
@@ -87,21 +106,8 @@ class OrderServiceTest {
             assertThat(response).isNotNull();
             assertThat(response.operatorId()).isEqualTo(TEST_OPERATOR_ID);
             assertThat(response.companyId()).isEqualTo(TEST_COMPANY_ID);
-            assertThat(response.packageCount()).isEqualTo(testCreateDto.packageNames().size());
-        }
-
-        @Test
-        @DisplayName("Should set status to PENDING on newly created order")
-        void addInboundOrder_statusIsPending() {
-            // given
-            ArgumentCaptor<InboundOrder> orderCaptor = ArgumentCaptor.forClass(InboundOrder.class);
-
-            // when
-            orderService.addInboundOrder(testCreateDto);
-
-            // then
-            verify(inboundDAO).save(orderCaptor.capture());
-            assertThat(orderCaptor.getValue().getStatus()).isEqualTo(InboundOrderStatus.PENDING);
+            assertThat(response.status()).isEqualTo(InboundOrderStatus.PENDING);
+            assertThat(response.createdAt()).isNotNull();
         }
     }
 
@@ -110,23 +116,24 @@ class OrderServiceTest {
     class GetInboundByUser {
 
         @Test
-        @DisplayName("Should return mapped list of InboundOrderReadDto for given userId")
+        @DisplayName("Should return mapped list of InboundOrderResponse for given userId")
         void getInboundByUser_ok() {
             // given
             when(inboundDAO.getInboundByUser(TEST_OPERATOR_ID)).thenReturn(List.of(testInboundOrder));
 
             // when
-            List<InboundOrderReadDto> result = orderService.getInboundByUser(TEST_OPERATOR_ID);
+            final List<InboundOrderResponse> result = orderService.getInboundByUser(TEST_OPERATOR_ID);
 
             // then
             assertThat(result).isNotNull();
             assertThat(result).hasSize(1);
 
-            InboundOrderReadDto dto = result.getFirst();
+            final InboundOrderResponse dto = result.getFirst();
             assertThat(dto.id()).isEqualTo(TEST_ORDER_ID);
             assertThat(dto.operatorId()).isEqualTo(TEST_OPERATOR_ID);
             assertThat(dto.companyId()).isEqualTo(TEST_COMPANY_ID);
             assertThat(dto.status()).isEqualTo(InboundOrderStatus.PENDING);
+            assertThat(dto.createdAt()).isEqualTo(TEST_TIME);
         }
 
         @Test
@@ -136,7 +143,78 @@ class OrderServiceTest {
             when(inboundDAO.getInboundByUser(TEST_OPERATOR_ID)).thenReturn(List.of());
 
             // when
-            List<InboundOrderReadDto> result = orderService.getInboundByUser(TEST_OPERATOR_ID);
+            final List<InboundOrderResponse> result = orderService.getInboundByUser(TEST_OPERATOR_ID);
+
+            // then
+            assertThat(result).isNotNull();
+            assertThat(result).isEmpty();
+        }
+    }
+
+    @Nested
+    @DisplayName("addOutboundOrder")
+    class AddOutboundOrder {
+
+        @Test
+        @DisplayName("Should save new outbound order and return response")
+        void addOutboundOrder_ok() {
+            // given
+            final ArgumentCaptor<OutboundOrder> orderCaptor = ArgumentCaptor.forClass(OutboundOrder.class);
+
+            // when
+            final OutboundOrderResponse response = orderService.addOutboundOrder(testOutboundCreateDto, TEST_OPERATOR_ID);
+
+            // then - what went to DAO
+            verify(outboundDAO).save(orderCaptor.capture());
+            final OutboundOrder savedEntity = orderCaptor.getValue();
+
+            assertThat(savedEntity.getOperatorId()).isEqualTo(TEST_OPERATOR_ID);
+            assertThat(savedEntity.getCompanyId()).isEqualTo(TEST_COMPANY_ID);
+            assertThat(savedEntity.getStatus()).isEqualTo(OutboundOrderStatus.PENDING);
+            assertThat(savedEntity.getCreatedAt()).isNotNull();
+
+            // then - what is returned
+            assertThat(response).isNotNull();
+            assertThat(response.operatorId()).isEqualTo(TEST_OPERATOR_ID);
+            assertThat(response.companyId()).isEqualTo(TEST_COMPANY_ID);
+            assertThat(response.status()).isEqualTo(OutboundOrderStatus.PENDING);
+            assertThat(response.createdAt()).isNotNull();
+        }
+    }
+
+    @Nested
+    @DisplayName("getOutboundByUser")
+    class GetOutboundByUser {
+
+        @Test
+        @DisplayName("Should return mapped list of OutboundOrderResponse for given userId")
+        void getOutboundByUser_ok() {
+            // given
+            when(outboundDAO.getOutboundByUser(TEST_OPERATOR_ID)).thenReturn(List.of(testOutboundOrder));
+
+            // when
+            final List<OutboundOrderResponse> result = orderService.getOutboundByUser(TEST_OPERATOR_ID);
+
+            // then
+            assertThat(result).isNotNull();
+            assertThat(result).hasSize(1);
+
+            final OutboundOrderResponse dto = result.getFirst();
+            assertThat(dto.id()).isEqualTo(TEST_ORDER_ID);
+            assertThat(dto.operatorId()).isEqualTo(TEST_OPERATOR_ID);
+            assertThat(dto.companyId()).isEqualTo(TEST_COMPANY_ID);
+            assertThat(dto.status()).isEqualTo(OutboundOrderStatus.PENDING);
+            assertThat(dto.createdAt()).isEqualTo(TEST_TIME);
+        }
+
+        @Test
+        @DisplayName("Should return empty list when user has no outbound orders")
+        void getOutboundByUser_emptyList() {
+            // given
+            when(outboundDAO.getOutboundByUser(TEST_OPERATOR_ID)).thenReturn(List.of());
+
+            // when
+            final List<OutboundOrderResponse> result = orderService.getOutboundByUser(TEST_OPERATOR_ID);
 
             // then
             assertThat(result).isNotNull();
