@@ -1,10 +1,10 @@
 package io.swiczka.github.apiforklift.domain;
 
 import io.swiczka.github.apiforklift.enums.TaskStatus;
-import io.swiczka.github.sharedcommon.helpers.Coordinate;
 
 public class ForkliftTask {
     private final Long taskId;
+    private final Long layoutId;
     private final Long packageId;
     private final int sourceX;
     private final int sourceY;
@@ -13,8 +13,9 @@ public class ForkliftTask {
     private Long assignedForkliftId;
     private TaskStatus status;
 
-    public ForkliftTask(Long taskId, Long packageId, int sourceX, int sourceY, int targetX, int targetY) {
+    public ForkliftTask(Long taskId, Long layoutId, Long packageId, int sourceX, int sourceY, int targetX, int targetY) {
         this.taskId = taskId;
+        this.layoutId = layoutId;
         this.packageId = packageId;
         this.sourceX = sourceX;
         this.sourceY = sourceY;
@@ -28,6 +29,10 @@ public class ForkliftTask {
 
     public Long getPackageId() {
         return packageId;
+    }
+
+    public Long getLayoutId() {
+        return layoutId;
     }
 
     public int getSourceX() {

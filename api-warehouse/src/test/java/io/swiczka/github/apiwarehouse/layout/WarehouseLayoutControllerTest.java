@@ -2,10 +2,9 @@ package io.swiczka.github.apiwarehouse.layout;
 
 import io.swiczka.github.apiwarehouse.exceptions.LayoutNotFoundException;
 import io.swiczka.github.apiwarehouse.layout.dto.GridDataDto;
-import io.swiczka.github.apiwarehouse.layout.helpers.Direction;
+import io.swiczka.github.sharedcommon.helpers.Direction;
 import io.swiczka.github.apiwarehouse.layout.response.LayoutReadResponse;
 import io.swiczka.github.sharedcommon.helpers.Coordinate;
-import jdk.jshell.spi.ExecutionControlProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;

@@ -5,7 +5,7 @@ import io.swiczka.github.apiwarehouse.domain.GridData;
 import io.swiczka.github.apiwarehouse.entity.Layout;
 import io.swiczka.github.apiwarehouse.exceptions.LayoutNotFoundException;
 import io.swiczka.github.apiwarehouse.layout.dto.GridDataDto;
-import io.swiczka.github.apiwarehouse.layout.helpers.Direction;
+import io.swiczka.github.sharedcommon.helpers.Direction;
 import io.swiczka.github.apiwarehouse.layout.response.LayoutReadResponse;
 import io.swiczka.github.sharedcommon.helpers.Coordinate;
 import org.junit.jupiter.api.BeforeEach;

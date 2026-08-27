@@ -1,14 +1,17 @@
-package io.swiczka.github.apiwarehouse.layout.helpers;
+package io.swiczka.github.sharedcommon.helpers;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
-public enum Direction{
-    UP(0), DOWN(1), LEFT(2), RIGHT(3);
+public enum Direction {
+    UP(0),
+    DOWN(1),
+    LEFT(2),
+    RIGHT(3);
 
     private final int value;
 
-    Direction(int value){
+    Direction(final int value) {
         this.value = value;
     }
 
@@ -18,8 +21,8 @@ public enum Direction{
     }
 
     @JsonCreator
-    public static Direction fromValue(int value) {
-        for (Direction direction : Direction.values()) {
+    public static Direction fromValue(final int value) {
+        for (final Direction direction : Direction.values()) {
             if (direction.value == value) {
                 return direction;
             }
@@ -28,4 +31,3 @@ public enum Direction{
         throw new IllegalArgumentException("Incorrect direction value: " + value);
     }
 }
-

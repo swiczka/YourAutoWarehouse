@@ -6,27 +6,34 @@ import io.swiczka.github.apiforklift.enums.TaskStatus;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Component
 public class ForkliftTaskRegistry {
     private final ConcurrentHashMap<Long, ForkliftTask> taskMap;
-
     private final AtomicLong idSequence;
 
     public ForkliftTaskRegistry() {
-        this.taskMap = new ConcurrentHashMap<Long, ForkliftTask>();
-        this.idSequence = new AtomicLong();
+        this.taskMap = new ConcurrentHashMap<>();
+        this.idSequence = new AtomicLong(1);
     }
 
-    public List<ForkliftTask> add(List<ForkliftTaskCreateDto> dtos){
-        List<ForkliftTask> tasks = new ArrayList<>();
-        for(ForkliftTaskCreateDto dto : dtos){
-            Long newId = idSequence.getAndIncrement();
-            ForkliftTask task = new ForkliftTask(
+    public List<ForkliftTask> add(final List<ForkliftTaskCreateDto> dtos) {
+        if (dtos == null || dtos.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        final List<ForkliftTask> tasks = new ArrayList<>();
+        for (final ForkliftTaskCreateDto dto : dtos) {
+            final Long newId = idSequence.getAndIncrement();
+            final ForkliftTask task = new ForkliftTask(
                     newId,
+                    dto.layoutId(),
                     dto.packageItemId(),
                     dto.sourceX(),
                     dto.sourceY(),
@@ -38,5 +45,32 @@ public class ForkliftTaskRegistry {
             tasks.add(task);
         }
         return tasks;
+    }
+
+    public List<ForkliftTask> getByLayoutId(final Long layoutId) {
+        if (layoutId == null) {
+            return Collections.emptyList();
+        }
+        return this.taskMap.values().stream()
+                .filter(task -> layoutId.equals(task.getLayoutId()))
+                .toList();
+    }
+
+    public Optional<ForkliftTask> getById(final Long id) {
+        if (id == null) {
+            return Optional.empty();
+        }
+        return Optional.ofNullable(this.taskMap.get(id));
+    }
+
+    public Collection<ForkliftTask> getAll() {
+        return this.taskMap.values();
+    }
+
+    public Optional<ForkliftTask> remove(final Long id) {
+        if (id == null) {
+            return Optional.empty();
+        }
+        return Optional.ofNullable(this.taskMap.remove(id));
     }
 }

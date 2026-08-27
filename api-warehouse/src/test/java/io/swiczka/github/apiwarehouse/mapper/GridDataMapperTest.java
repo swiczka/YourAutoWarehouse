@@ -2,8 +2,8 @@ package io.swiczka.github.apiwarehouse.mapper;
 
 import io.swiczka.github.apiwarehouse.domain.GridData;
 import io.swiczka.github.apiwarehouse.layout.dto.GridDataDto;
-import io.swiczka.github.apiwarehouse.layout.helpers.Direction;
 import io.swiczka.github.sharedcommon.helpers.Coordinate;
+import io.swiczka.github.sharedcommon.helpers.Direction;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;

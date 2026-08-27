@@ -1,7 +1,7 @@
 package io.swiczka.github.apiwarehouse.domain;
 
 import io.swiczka.github.sharedcommon.helpers.Coordinate;
-import io.swiczka.github.apiwarehouse.layout.helpers.Direction;
+import io.swiczka.github.sharedcommon.helpers.Direction;
 
 import java.util.Set;
 

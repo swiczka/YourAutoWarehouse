@@ -1,4 +1,4 @@
-package io.swiczka.github.apiwarehouse.layout.helpers;
+package io.swiczka.github.sharedcommon.helpers;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,7 +16,7 @@ class DirectionTest {
     @DisplayName("fromValue should return correct Direction for valid values")
     void fromValue_validValues(final int value, final String expectedName) {
         // when
-        Direction direction = Direction.fromValue(value);
+        final Direction direction = Direction.fromValue(value);
 
         // then
         assertThat(direction.name()).isEqualTo(expectedName);
@@ -24,7 +24,7 @@ class DirectionTest {
     }
 
     @ParameterizedTest
-    @ValueSource(ints = {-1,4,5,999999})
+    @ValueSource(ints = {-1, 4, 5, 999999})
     @DisplayName("fromValue should throw for invalid values")
     void fromValue_invalidValues(final int value) {
         // when then

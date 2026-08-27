@@ -1,0 +1,2341 @@
+{
+  "id": 24,
+  "user_id": "c1aada91-fdab-4c94-b6d5-f888f50ea8dc",
+  "forklift_number": 5,
+  "grid_data": [
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 0,
+        "y": 1
+      },
+      "allowedDirections": [
+        1
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 0,
+        "y": 0
+      },
+      "allowedDirections": [
+        3
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 1,
+        "y": 1
+      },
+      "allowedDirections": [
+        0,
+        2
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 1,
+        "y": 0
+      },
+      "allowedDirections": [
+        0,
+        3
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 2,
+        "y": 1
+      },
+      "allowedDirections": [
+        1,
+        2
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 2,
+        "y": 0
+      },
+      "allowedDirections": [
+        3
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 3,
+        "y": 1
+      },
+      "allowedDirections": [
+        2
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 3,
+        "y": 0
+      },
+      "allowedDirections": [
+        0,
+        3
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 4,
+        "y": 1
+      },
+      "allowedDirections": [
+        1,
+        2
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 4,
+        "y": 0
+      },
+      "allowedDirections": [
+        3
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 5,
+        "y": 1
+      },
+      "allowedDirections": [
+        0,
+        2
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 5,
+        "y": 0
+      },
+      "allowedDirections": [
+        0
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 0,
+        "y": 3
+      },
+      "allowedDirections": [
+        1
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 0,
+        "y": 2
+      },
+      "allowedDirections": [
+        1,
+        3
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 1,
+        "y": 3
+      },
+      "allowedDirections": [
+        0,
+        2
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 1,
+        "y": 2
+      },
+      "allowedDirections": [
+        0
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 4,
+        "y": 3
+      },
+      "allowedDirections": [
+        1
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 4,
+        "y": 2
+      },
+      "allowedDirections": [
+        1,
+        3
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 5,
+        "y": 3
+      },
+      "allowedDirections": [
+        0,
+        2
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 5,
+        "y": 2
+      },
+      "allowedDirections": [
+        0
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 8,
+        "y": 3
+      },
+      "allowedDirections": [
+        1
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 8,
+        "y": 2
+      },
+      "allowedDirections": [
+        3
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 9,
+        "y": 3
+      },
+      "allowedDirections": [
+        0
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 9,
+        "y": 2
+      },
+      "allowedDirections": [
+        0
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 12,
+        "y": 3
+      },
+      "allowedDirections": [
+        1
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 12,
+        "y": 2
+      },
+      "allowedDirections": [
+        3
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 13,
+        "y": 3
+      },
+      "allowedDirections": [
+        0
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 13,
+        "y": 2
+      },
+      "allowedDirections": [
+        0
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 0,
+        "y": 5
+      },
+      "allowedDirections": [
+        1
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 0,
+        "y": 4
+      },
+      "allowedDirections": [
+        1,
+        3
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 1,
+        "y": 5
+      },
+      "allowedDirections": [
+        0,
+        2
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 1,
+        "y": 4
+      },
+      "allowedDirections": [
+        0
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 4,
+        "y": 5
+      },
+      "allowedDirections": [
+        1
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 4,
+        "y": 4
+      },
+      "allowedDirections": [
+        1,
+        3
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 5,
+        "y": 5
+      },
+      "allowedDirections": [
+        0,
+        2
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 5,
+        "y": 4
+      },
+      "allowedDirections": [
+        0
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 8,
+        "y": 5
+      },
+      "allowedDirections": [
+        1
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 8,
+        "y": 4
+      },
+      "allowedDirections": [
+        1,
+        3
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 9,
+        "y": 5
+      },
+      "allowedDirections": [
+        0,
+        2
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 9,
+        "y": 4
+      },
+      "allowedDirections": [
+        0
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 12,
+        "y": 5
+      },
+      "allowedDirections": [
+        1
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 12,
+        "y": 4
+      },
+      "allowedDirections": [
+        1,
+        3
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 13,
+        "y": 5
+      },
+      "allowedDirections": [
+        0,
+        2
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 13,
+        "y": 4
+      },
+      "allowedDirections": [
+        0
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 0,
+        "y": 7
+      },
+      "allowedDirections": [
+        1
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 0,
+        "y": 6
+      },
+      "allowedDirections": [
+        1,
+        3
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 1,
+        "y": 7
+      },
+      "allowedDirections": [
+        0,
+        2
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 1,
+        "y": 6
+      },
+      "allowedDirections": [
+        0
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 4,
+        "y": 7
+      },
+      "allowedDirections": [
+        1
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 4,
+        "y": 6
+      },
+      "allowedDirections": [
+        1,
+        3
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 5,
+        "y": 7
+      },
+      "allowedDirections": [
+        0,
+        2
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 5,
+        "y": 6
+      },
+      "allowedDirections": [
+        0,
+        3
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 6,
+        "y": 7
+      },
+      "allowedDirections": [
+        1,
+        2
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 6,
+        "y": 6
+      },
+      "allowedDirections": [
+        3
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 7,
+        "y": 7
+      },
+      "allowedDirections": [
+        2
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 7,
+        "y": 6
+      },
+      "allowedDirections": [
+        0,
+        3
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 8,
+        "y": 7
+      },
+      "allowedDirections": [
+        1,
+        2
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 8,
+        "y": 6
+      },
+      "allowedDirections": [
+        1,
+        3
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 9,
+        "y": 7
+      },
+      "allowedDirections": [
+        0,
+        2
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 9,
+        "y": 6
+      },
+      "allowedDirections": [
+        0,
+        3
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 10,
+        "y": 7
+      },
+      "allowedDirections": [
+        1,
+        2
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 10,
+        "y": 6
+      },
+      "allowedDirections": [
+        3
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 11,
+        "y": 7
+      },
+      "allowedDirections": [
+        2
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 11,
+        "y": 6
+      },
+      "allowedDirections": [
+        0,
+        3
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 12,
+        "y": 7
+      },
+      "allowedDirections": [
+        1,
+        2
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 12,
+        "y": 6
+      },
+      "allowedDirections": [
+        1,
+        3
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 13,
+        "y": 7
+      },
+      "allowedDirections": [
+        0,
+        2
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 13,
+        "y": 6
+      },
+      "allowedDirections": [
+        0
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 0,
+        "y": 9
+      },
+      "allowedDirections": [
+        1
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 0,
+        "y": 8
+      },
+      "allowedDirections": [
+        1,
+        3
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 1,
+        "y": 9
+      },
+      "allowedDirections": [
+        0,
+        2
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 1,
+        "y": 8
+      },
+      "allowedDirections": [
+        0
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 4,
+        "y": 9
+      },
+      "allowedDirections": [
+        1
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 4,
+        "y": 8
+      },
+      "allowedDirections": [
+        1
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 5,
+        "y": 9
+      },
+      "allowedDirections": [
+        2
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 5,
+        "y": 8
+      },
+      "allowedDirections": [
+        0
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 8,
+        "y": 9
+      },
+      "allowedDirections": [
+        1
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 8,
+        "y": 8
+      },
+      "allowedDirections": [
+        1,
+        3
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 9,
+        "y": 9
+      },
+      "allowedDirections": [
+        0,
+        2
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 9,
+        "y": 8
+      },
+      "allowedDirections": [
+        0
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 12,
+        "y": 9
+      },
+      "allowedDirections": [
+        1
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 12,
+        "y": 8
+      },
+      "allowedDirections": [
+        1,
+        3
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 13,
+        "y": 9
+      },
+      "allowedDirections": [
+        0,
+        2
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 13,
+        "y": 8
+      },
+      "allowedDirections": [
+        0
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 0,
+        "y": 11
+      },
+      "allowedDirections": [
+        1
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 0,
+        "y": 10
+      },
+      "allowedDirections": [
+        1,
+        3
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 1,
+        "y": 11
+      },
+      "allowedDirections": [
+        0,
+        2
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 1,
+        "y": 10
+      },
+      "allowedDirections": [
+        0
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 8,
+        "y": 11
+      },
+      "allowedDirections": [
+        1
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 8,
+        "y": 10
+      },
+      "allowedDirections": [
+        1,
+        3
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 9,
+        "y": 11
+      },
+      "allowedDirections": [
+        0,
+        2
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 9,
+        "y": 10
+      },
+      "allowedDirections": [
+        0
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 12,
+        "y": 11
+      },
+      "allowedDirections": [
+        1
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 12,
+        "y": 10
+      },
+      "allowedDirections": [
+        1,
+        3
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 13,
+        "y": 11
+      },
+      "allowedDirections": [
+        0,
+        2
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 13,
+        "y": 10
+      },
+      "allowedDirections": [
+        0
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 0,
+        "y": 13
+      },
+      "allowedDirections": [
+        1
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 0,
+        "y": 12
+      },
+      "allowedDirections": [
+        1,
+        3
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 1,
+        "y": 13
+      },
+      "allowedDirections": [
+        2
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 1,
+        "y": 12
+      },
+      "allowedDirections": [
+        0,
+        3
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 2,
+        "y": 13
+      },
+      "allowedDirections": [
+        1,
+        2
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 2,
+        "y": 12
+      },
+      "allowedDirections": [
+        3
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 3,
+        "y": 13
+      },
+      "allowedDirections": [
+        2
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 3,
+        "y": 12
+      },
+      "allowedDirections": [
+        0,
+        3
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 4,
+        "y": 13
+      },
+      "allowedDirections": [
+        1,
+        2
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 4,
+        "y": 12
+      },
+      "allowedDirections": [
+        3
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 5,
+        "y": 13
+      },
+      "allowedDirections": [
+        2
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 5,
+        "y": 12
+      },
+      "allowedDirections": [
+        0,
+        3
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 6,
+        "y": 13
+      },
+      "allowedDirections": [
+        1,
+        2
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 6,
+        "y": 12
+      },
+      "allowedDirections": [
+        3
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 7,
+        "y": 13
+      },
+      "allowedDirections": [
+        2
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 7,
+        "y": 12
+      },
+      "allowedDirections": [
+        0,
+        3
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 8,
+        "y": 13
+      },
+      "allowedDirections": [
+        1,
+        2
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 8,
+        "y": 12
+      },
+      "allowedDirections": [
+        1,
+        3
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 9,
+        "y": 13
+      },
+      "allowedDirections": [
+        2
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 9,
+        "y": 12
+      },
+      "allowedDirections": [
+        0,
+        3
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 10,
+        "y": 13
+      },
+      "allowedDirections": [
+        1,
+        2
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 10,
+        "y": 12
+      },
+      "allowedDirections": [
+        3
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 11,
+        "y": 13
+      },
+      "allowedDirections": [
+        2
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 11,
+        "y": 12
+      },
+      "allowedDirections": [
+        0,
+        3
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 12,
+        "y": 13
+      },
+      "allowedDirections": [
+        1,
+        2
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 12,
+        "y": 12
+      },
+      "allowedDirections": [
+        1,
+        3
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 13,
+        "y": 13
+      },
+      "allowedDirections": [
+        2
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 13,
+        "y": 12
+      },
+      "allowedDirections": [
+        0,
+        3
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 14,
+        "y": 13
+      },
+      "allowedDirections": [
+        2
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 14,
+        "y": 12
+      },
+      "allowedDirections": [
+        3
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 15,
+        "y": 13
+      },
+      "allowedDirections": [
+        2
+      ]
+    },
+    {
+      "isRoad": true,
+      "isShelf": false,
+      "coordinates": {
+        "x": 15,
+        "y": 12
+      },
+      "allowedDirections": [
+        0
+      ]
+    },
+    {
+      "isRoad": false,
+      "isShelf": true,
+      "coordinates": {
+        "x": 6,
+        "y": 0
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": false,
+      "coordinates": {
+        "x": 7,
+        "y": 0
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": false,
+      "coordinates": {
+        "x": 8,
+        "y": 0
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": false,
+      "coordinates": {
+        "x": 9,
+        "y": 0
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": false,
+      "coordinates": {
+        "x": 10,
+        "y": 0
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": false,
+      "coordinates": {
+        "x": 11,
+        "y": 0
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": false,
+      "coordinates": {
+        "x": 12,
+        "y": 0
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": false,
+      "coordinates": {
+        "x": 13,
+        "y": 0
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": false,
+      "coordinates": {
+        "x": 14,
+        "y": 0
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": false,
+      "coordinates": {
+        "x": 15,
+        "y": 0
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": true,
+      "coordinates": {
+        "x": 6,
+        "y": 1
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": false,
+      "coordinates": {
+        "x": 7,
+        "y": 1
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": true,
+      "coordinates": {
+        "x": 8,
+        "y": 1
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": true,
+      "coordinates": {
+        "x": 9,
+        "y": 1
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": false,
+      "coordinates": {
+        "x": 10,
+        "y": 1
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": false,
+      "coordinates": {
+        "x": 11,
+        "y": 1
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": true,
+      "coordinates": {
+        "x": 12,
+        "y": 1
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": true,
+      "coordinates": {
+        "x": 13,
+        "y": 1
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": false,
+      "coordinates": {
+        "x": 14,
+        "y": 1
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": false,
+      "coordinates": {
+        "x": 15,
+        "y": 1
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": true,
+      "coordinates": {
+        "x": 2,
+        "y": 2
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": true,
+      "coordinates": {
+        "x": 3,
+        "y": 2
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": true,
+      "coordinates": {
+        "x": 6,
+        "y": 2
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": true,
+      "coordinates": {
+        "x": 7,
+        "y": 2
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": true,
+      "coordinates": {
+        "x": 10,
+        "y": 2
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": true,
+      "coordinates": {
+        "x": 11,
+        "y": 2
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": true,
+      "coordinates": {
+        "x": 14,
+        "y": 2
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": false,
+      "coordinates": {
+        "x": 15,
+        "y": 2
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": true,
+      "coordinates": {
+        "x": 2,
+        "y": 3
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": true,
+      "coordinates": {
+        "x": 3,
+        "y": 3
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": true,
+      "coordinates": {
+        "x": 6,
+        "y": 3
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": true,
+      "coordinates": {
+        "x": 7,
+        "y": 3
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": true,
+      "coordinates": {
+        "x": 10,
+        "y": 3
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": true,
+      "coordinates": {
+        "x": 11,
+        "y": 3
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": true,
+      "coordinates": {
+        "x": 14,
+        "y": 3
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": false,
+      "coordinates": {
+        "x": 15,
+        "y": 3
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": true,
+      "coordinates": {
+        "x": 2,
+        "y": 4
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": true,
+      "coordinates": {
+        "x": 3,
+        "y": 4
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": true,
+      "coordinates": {
+        "x": 6,
+        "y": 4
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": true,
+      "coordinates": {
+        "x": 7,
+        "y": 4
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": true,
+      "coordinates": {
+        "x": 10,
+        "y": 4
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": true,
+      "coordinates": {
+        "x": 11,
+        "y": 4
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": true,
+      "coordinates": {
+        "x": 14,
+        "y": 4
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": false,
+      "coordinates": {
+        "x": 15,
+        "y": 4
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": true,
+      "coordinates": {
+        "x": 2,
+        "y": 5
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": true,
+      "coordinates": {
+        "x": 3,
+        "y": 5
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": true,
+      "coordinates": {
+        "x": 6,
+        "y": 5
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": true,
+      "coordinates": {
+        "x": 7,
+        "y": 5
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": true,
+      "coordinates": {
+        "x": 10,
+        "y": 5
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": true,
+      "coordinates": {
+        "x": 11,
+        "y": 5
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": true,
+      "coordinates": {
+        "x": 14,
+        "y": 5
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": false,
+      "coordinates": {
+        "x": 15,
+        "y": 5
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": true,
+      "coordinates": {
+        "x": 2,
+        "y": 6
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": true,
+      "coordinates": {
+        "x": 3,
+        "y": 6
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": true,
+      "coordinates": {
+        "x": 14,
+        "y": 6
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": false,
+      "coordinates": {
+        "x": 15,
+        "y": 6
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": true,
+      "coordinates": {
+        "x": 2,
+        "y": 7
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": true,
+      "coordinates": {
+        "x": 3,
+        "y": 7
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": true,
+      "coordinates": {
+        "x": 14,
+        "y": 7
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": false,
+      "coordinates": {
+        "x": 15,
+        "y": 7
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": true,
+      "coordinates": {
+        "x": 2,
+        "y": 8
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": true,
+      "coordinates": {
+        "x": 3,
+        "y": 8
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": true,
+      "coordinates": {
+        "x": 6,
+        "y": 8
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": true,
+      "coordinates": {
+        "x": 7,
+        "y": 8
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": true,
+      "coordinates": {
+        "x": 10,
+        "y": 8
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": true,
+      "coordinates": {
+        "x": 11,
+        "y": 8
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": true,
+      "coordinates": {
+        "x": 14,
+        "y": 8
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": false,
+      "coordinates": {
+        "x": 15,
+        "y": 8
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": true,
+      "coordinates": {
+        "x": 2,
+        "y": 9
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": true,
+      "coordinates": {
+        "x": 3,
+        "y": 9
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": true,
+      "coordinates": {
+        "x": 6,
+        "y": 9
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": true,
+      "coordinates": {
+        "x": 7,
+        "y": 9
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": true,
+      "coordinates": {
+        "x": 10,
+        "y": 9
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": true,
+      "coordinates": {
+        "x": 11,
+        "y": 9
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": true,
+      "coordinates": {
+        "x": 14,
+        "y": 9
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": false,
+      "coordinates": {
+        "x": 15,
+        "y": 9
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": true,
+      "coordinates": {
+        "x": 2,
+        "y": 10
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": false,
+      "coordinates": {
+        "x": 3,
+        "y": 10
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": true,
+      "coordinates": {
+        "x": 4,
+        "y": 10
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": true,
+      "coordinates": {
+        "x": 5,
+        "y": 10
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": false,
+      "coordinates": {
+        "x": 6,
+        "y": 10
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": true,
+      "coordinates": {
+        "x": 7,
+        "y": 10
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": true,
+      "coordinates": {
+        "x": 10,
+        "y": 10
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": true,
+      "coordinates": {
+        "x": 11,
+        "y": 10
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": true,
+      "coordinates": {
+        "x": 14,
+        "y": 10
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": false,
+      "coordinates": {
+        "x": 15,
+        "y": 10
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": true,
+      "coordinates": {
+        "x": 2,
+        "y": 11
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": true,
+      "coordinates": {
+        "x": 3,
+        "y": 11
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": true,
+      "coordinates": {
+        "x": 4,
+        "y": 11
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": true,
+      "coordinates": {
+        "x": 5,
+        "y": 11
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": true,
+      "coordinates": {
+        "x": 6,
+        "y": 11
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": true,
+      "coordinates": {
+        "x": 7,
+        "y": 11
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": true,
+      "coordinates": {
+        "x": 10,
+        "y": 11
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": true,
+      "coordinates": {
+        "x": 11,
+        "y": 11
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": true,
+      "coordinates": {
+        "x": 14,
+        "y": 11
+      },
+      "allowedDirections": []
+    },
+    {
+      "isRoad": false,
+      "isShelf": true,
+      "coordinates": {
+        "x": 15,
+        "y": 11
+      },
+      "allowedDirections": []
+    }
+  ]
+}

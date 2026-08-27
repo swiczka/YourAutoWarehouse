@@ -12,6 +12,7 @@ public abstract class BaseOrder {
     @Column(name = "id")
     private Long id;
 
+    //TODO: order has to be CONNECTED TO CERTAIN LAYOUT by ID!
     @Column(name = "operator_id")
     private UUID operatorId;
 

@@ -1,10 +1,10 @@
 package io.swiczka.github.apiwarehouse.layout.dto;
 
-import io.swiczka.github.apiwarehouse.layout.helpers.Direction;
-import java.util.Set;
-
 import io.swiczka.github.sharedcommon.helpers.Coordinate;
+import io.swiczka.github.sharedcommon.helpers.Direction;
 import jakarta.validation.Valid;
+
+import java.util.Set;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import org.hibernate.validator.constraints.UniqueElements;
