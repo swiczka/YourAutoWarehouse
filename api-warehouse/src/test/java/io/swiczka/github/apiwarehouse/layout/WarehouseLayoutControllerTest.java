@@ -122,7 +122,7 @@ class WarehouseLayoutControllerTest {
             LayoutReadResponse expectedResponse = createTestResponse();
 
             //when
-            when(layoutService.getUserLayout(TEST_USER_ID)).thenReturn(expectedResponse);
+            when(layoutService.getLatestUserLayout(TEST_USER_ID)).thenReturn(expectedResponse);
 
             //then
             mockMvc.perform(get("/api/warehouse/layout")
@@ -138,7 +138,7 @@ class WarehouseLayoutControllerTest {
             // given
 
             //when
-            when(layoutService.getUserLayout(TEST_USER_ID)).thenThrow(LayoutNotFoundException.class);
+            when(layoutService.getLatestUserLayout(TEST_USER_ID)).thenThrow(LayoutNotFoundException.class);
 
             //then
             mockMvc.perform(get("/api/warehouse/layout")

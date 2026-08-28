@@ -8,5 +8,5 @@ import java.util.UUID;
 public interface LayoutDAO {
     void save(Layout layout);
     Optional<Layout> findById(Long id);
-    Optional<Layout> findByUserId(UUID userId);
+    Optional<Layout> findLatestByUserId(UUID userId);
 }

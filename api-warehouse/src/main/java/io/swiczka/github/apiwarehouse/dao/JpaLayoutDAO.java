@@ -30,7 +30,7 @@ public class JpaLayoutDAO implements LayoutDAO{
     }
 
     @Override
-    public Optional<Layout> findByUserId(UUID userId) {
+    public Optional<Layout> findLatestByUserId(UUID userId) {
         List<Layout> layouts = entityManager.createQuery(
                 "FROM Layout WHERE userId = :userId " +
                         "ORDER BY createdAt DESC", Layout.class)

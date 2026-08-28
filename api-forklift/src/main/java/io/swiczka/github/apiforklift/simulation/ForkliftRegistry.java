@@ -52,6 +52,16 @@ public class ForkliftRegistry {
                 .toList();
     }
 
+    public List<Forklift> findFreeByLayoutId(final Long layoutId) {
+        if (layoutId == null) {
+            return Collections.emptyList();
+        }
+        List<Forklift> layoutForklifts = this.findByLayoutId(layoutId);
+        return layoutForklifts.stream()
+                .filter(Forklift::isFree)
+                .toList();
+    }
+
     public Collection<Forklift> getAll() {
         return this.forkliftsMap.values();
     }

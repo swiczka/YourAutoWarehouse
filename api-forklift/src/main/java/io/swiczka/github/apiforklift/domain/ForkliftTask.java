@@ -66,4 +66,19 @@ public class ForkliftTask {
     public void setStatus(TaskStatus status) {
         this.status = status;
     }
+
+    @Override
+    public String toString() {
+        return "ForkliftTask{" +
+                "taskId=" + taskId +
+                ", layoutId=" + layoutId +
+                ", packageId=" + packageId +
+                ", sourceX=" + sourceX +
+                ", sourceY=" + sourceY +
+                ", targetX=" + targetX +
+                ", targetY=" + targetY +
+                ", assignedForkliftId=" + assignedForkliftId +
+                ", status=" + status +
+                '}';
+    }
 }

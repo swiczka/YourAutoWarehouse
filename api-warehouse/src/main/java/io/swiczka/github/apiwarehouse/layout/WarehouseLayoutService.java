@@ -35,8 +35,8 @@ public class WarehouseLayoutService {
         return LayoutMapper.toDto(newLayout);
     }
 
-    public LayoutReadResponse getUserLayout(final UUID userId) {
-        return layoutDAO.findByUserId(userId)
+    public LayoutReadResponse getLatestUserLayout(final UUID userId) {
+        return layoutDAO.findLatestByUserId(userId)
                 .map(LayoutMapper::toDto)
                 .orElseThrow(() -> new LayoutNotFoundException(userId));
     }

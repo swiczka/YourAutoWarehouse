@@ -12,10 +12,12 @@ COPY api-gateway/pom.xml ./api-gateway/
 COPY api-order/pom.xml ./api-order/
 COPY api-warehouse/pom.xml ./api-warehouse/
 COPY api-forklift/pom.xml ./api-forklift/
+COPY shared-common/pom.xml ./shared-common/
 RUN --mount=type=cache,target=/root/.m2 \
     ./mvnw dependency:go-offline -pl api-forklift -am
 
 # Kopiujemy źródła i budujemy
+COPY shared-common/src ./shared-common/src
 COPY api-forklift/src ./api-forklift/src
 RUN --mount=type=cache,target=/root/.m2 \
     ./mvnw package -DskipTests -pl api-forklift -am

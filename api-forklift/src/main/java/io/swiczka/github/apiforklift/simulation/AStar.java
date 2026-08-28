@@ -22,9 +22,23 @@ public final class AStar {
         // Utility class
     }
 
+    private static Optional<Coordinate> tryGetNeighboringRoad(final int x, final int y, final SimulationLayout layout) {
+        final SimulationGridData left = layout.getCell(x - 1, y).orElse(null);
+        final SimulationGridData right = layout.getCell(x + 1, y).orElse(null);
+        final SimulationGridData upper = layout.getCell(x, y + 1).orElse(null);
+        final SimulationGridData bottom = layout.getCell(x, y - 1).orElse(null);
+
+        if (left != null && Boolean.TRUE.equals(left.isRoad())) return Optional.of(left.coordinates());
+        if (right != null && Boolean.TRUE.equals(right.isRoad())) return Optional.of(right.coordinates());
+        if (upper != null && Boolean.TRUE.equals(upper.isRoad())) return Optional.of(upper.coordinates());
+        if (bottom != null && Boolean.TRUE.equals(bottom.isRoad())) return Optional.of(bottom.coordinates());
+
+        return Optional.empty();
+    }
+
     public static List<Coordinate> findPath(
-            final Coordinate start,
-            final Coordinate target,
+            Coordinate start, //not final as can be changed to neighboring cell
+            Coordinate target,
             final SimulationLayout layout
     ) {
         if (start == null || target == null || layout == null) {
@@ -45,8 +59,20 @@ public final class AStar {
         final boolean isStartPassable = Boolean.TRUE.equals(startCellOpt.get().isRoad());
         final boolean isTargetPassable = Boolean.TRUE.equals(targetCellOpt.get().isRoad());
 
-        if (!isStartPassable || !isTargetPassable) {
-            return Collections.emptyList();
+        if (!isStartPassable) {
+            //check if it neighbors a road
+            Optional<Coordinate> neighboringRoad = tryGetNeighboringRoad(start.x(), start.y(), layout);
+            if(neighboringRoad.isEmpty()){
+                return Collections.emptyList();
+            }
+            start = neighboringRoad.get();
+        }
+        if(!isTargetPassable){
+            Optional<Coordinate> neighboringRoad = tryGetNeighboringRoad(target.x(), target.y(), layout);
+            if(neighboringRoad.isEmpty()){
+                return Collections.emptyList();
+            }
+            target = neighboringRoad.get();
         }
 
         final PriorityQueue<Node> openSet = new PriorityQueue<>(Comparator.comparingInt(Node::fScore));

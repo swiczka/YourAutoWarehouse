@@ -31,8 +31,8 @@ public class WarehouseLayoutController {
     }
 
     @GetMapping("/layout")
-    public LayoutReadResponse getUserLayout(@RequestHeader("X-Guest-Id") final UUID guestId) {
-        return layoutService.getUserLayout(guestId);
+    public LayoutReadResponse getLatestUserLayout(@RequestHeader("X-Guest-Id") final UUID guestId) {
+        return layoutService.getLatestUserLayout(guestId);
     }
 
     @GetMapping("/layout/{id}")

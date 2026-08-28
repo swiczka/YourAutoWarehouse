@@ -1,10 +1,15 @@
 package io.swiczka.github.apiforklift.simulation;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swiczka.github.apiforklift.domain.Forklift;
+import io.swiczka.github.apiforklift.domain.ForkliftTask;
 import io.swiczka.github.apiforklift.domain.SimulationLayout;
+import io.swiczka.github.apiforklift.dto.ForkliftTaskCreateDto;
+import io.swiczka.github.apiforklift.enums.TaskStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.core.io.ClassPathResource;
 
 import java.util.Collections;
 import java.util.List;
@@ -46,11 +51,46 @@ class SimulationEngineTest {
         assertThat(forklifts).hasSize(targetForklifts);
         assertThat(forklifts).allMatch(f -> f.getLayoutId().equals(layoutId));
         assertThat(forklifts).allMatch(f -> f.getOperatorId().equals(userId));
+    }
 
-        // when another tick occurs
+    @Test
+    @DisplayName("should assign pending task to free forklift and step through path")
+    void shouldAssignPendingTaskAndMoveForklift() throws Exception {
+        // given - load real sample layout
+        final ObjectMapper mapper = new ObjectMapper();
+        final ClassPathResource resource =
+                new ClassPathResource("data/sample_layout.json");
+        final SimulationLayout layout;
+        try (final java.io.InputStream is = resource.getInputStream()) {
+            layout = mapper.readValue(is, SimulationLayout.class);
+        }
+        layoutCache.put(layout);
+
+        // create a task on sample layout: source (0, 1), target (2, 0)
+        final ForkliftTaskCreateDto taskDto =
+                new ForkliftTaskCreateDto(555L, layout.getId(), 0, 1, 2, 0);
+        final List<ForkliftTask> addedTasks = taskRegistry.add(List.of(taskDto));
+        final ForkliftTask task = addedTasks.getFirst();
+
+        // when 1: first tick creates forklifts and assigns pending task
         simulationEngine.tick();
 
-        // then count does not increase beyond target
-        assertThat(forkliftRegistry.findByLayoutId(layoutId)).hasSize(targetForklifts);
+        // then
+        assertThat(task.getStatus()).isEqualTo(TaskStatus.IN_PROGRESS);
+        assertThat(task.getAssignedForkliftId()).isNotNull();
+
+        final Forklift assignedForklift = forkliftRegistry.getById(task.getAssignedForkliftId()).orElseThrow();
+        assertThat(assignedForklift.getCurrentTaskId()).isEqualTo(task.getTaskId());
+
+        // when 2: run ticks until task is completed
+        for (int i = 0; i < 20; i++) {
+            simulationEngine.tick();
+            if (task.getStatus() == TaskStatus.COMPLETE) {
+                break;
+            }
+        }
+
+        // then
+        assertThat(task.getStatus()).isEqualTo(TaskStatus.COMPLETE);
     }
 }

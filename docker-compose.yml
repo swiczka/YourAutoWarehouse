@@ -75,12 +75,25 @@ services:
       - "8081:8081"
     networks:
       - yaw-network
-  shared-common:
-    container_name: shared_common
+  api-forklift:
+    container_name: api-forklift
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DB_HOST: postgres
+      POSTGRES_ORDER_NAME: ${POSTGRES_FORKLIFT_NAME}
+      POSTGRES_ORDER_USER: ${POSTGRES_FORKLIFT_USER}
+      POSTGRES_ORDER_PASSWORD: ${POSTGRES_FORKLIFT_PASSWORD}
     build:
       context: .
-      dockerfile: shared-common/Dockerfile
-    image: shared-common:latest
+      dockerfile: api-forklift/Dockerfile
+    image: api-forklift:latest
+    ports:
+      - "8083:8083"
+    networks:
+      - yaw-network
+
 volumes:
   postgres-data:
 

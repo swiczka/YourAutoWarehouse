@@ -104,10 +104,10 @@ class WarehouseLayoutServiceTest {
         @DisplayName("Should return user's layout when found")
         void getUserLayout_ok(){
             //given
-            when(layoutDAO.findByUserId(TEST_USER_ID)).thenReturn(Optional.of(testLayout));
+            when(layoutDAO.findLatestByUserId(TEST_USER_ID)).thenReturn(Optional.of(testLayout));
 
             //when
-            LayoutReadResponse response = layoutService.getUserLayout(TEST_USER_ID);
+            LayoutReadResponse response = layoutService.getLatestUserLayout(TEST_USER_ID);
 
             //then
             assertThat(response).isNotNull();
@@ -119,10 +119,10 @@ class WarehouseLayoutServiceTest {
         @DisplayName("Should throw LayoutNotFoundException when not found")
         void getUserLayout_layoutNotFound(){
             //given
-            when(layoutDAO.findByUserId(TEST_USER_ID)).thenReturn(Optional.empty());
+            when(layoutDAO.findLatestByUserId(TEST_USER_ID)).thenReturn(Optional.empty());
 
             //when then
-            assertThatThrownBy(() -> layoutService.getUserLayout(TEST_USER_ID))
+            assertThatThrownBy(() -> layoutService.getLatestUserLayout(TEST_USER_ID))
                     .isInstanceOf(LayoutNotFoundException.class)
                     .hasMessageContaining(TEST_USER_ID.toString());
         }
