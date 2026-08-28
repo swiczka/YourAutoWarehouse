@@ -35,6 +35,10 @@ services:
       context: .
       dockerfile: api-gateway/Dockerfile
     image: api-gateway:latest
+    environment:
+      ORDER_HOST: api-order
+      WAREHOUSE_HOST: api-warehouse
+      FORKLIFT_HOST: api-forklift
     ports:
       - "8080:8080"
     networks:
@@ -82,9 +86,9 @@ services:
         condition: service_healthy
     environment:
       DB_HOST: postgres
-      POSTGRES_ORDER_NAME: ${POSTGRES_FORKLIFT_NAME}
-      POSTGRES_ORDER_USER: ${POSTGRES_FORKLIFT_USER}
-      POSTGRES_ORDER_PASSWORD: ${POSTGRES_FORKLIFT_PASSWORD}
+      POSTGRES_FORKLIFT_NAME: ${POSTGRES_FORKLIFT_NAME}
+      POSTGRES_FORKLIFT_USER: ${POSTGRES_FORKLIFT_USER}
+      POSTGRES_FORKLIFT_PASSWORD: ${POSTGRES_FORKLIFT_PASSWORD}
     build:
       context: .
       dockerfile: api-forklift/Dockerfile
