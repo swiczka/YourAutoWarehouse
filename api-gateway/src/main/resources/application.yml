@@ -4,12 +4,29 @@ server:
 spring:
   application:
     name: api-gateway
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
   main:
     web-application-type: reactive
   cloud:
     gateway:
       server:
         webflux:
+          default-filters:
+            - name: RequestSize
+              args:
+                maxSize: 1MB
+            - name: RequestHeaderSize
+              args:
+                maxSize: 16KB
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 10   # ile requestów na sekundę
+                redis-rate-limiter.burstCapacity: 20   # maksymalny chwilowy skok
+                key-resolver: "#{@userKeyResolver}"    # nazwa beana w Javie
+
           routes:
             - id: order
               predicates:

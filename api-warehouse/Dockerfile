@@ -1,5 +1,5 @@
 # === STAGE 1: Build ===
-FROM eclipse-temurin:26-jdk AS builder
+FROM eclipse-temurin:25-jdk AS builder
 WORKDIR /app
 
 # Kopiujemy parent POM i wrapper
@@ -23,7 +23,7 @@ RUN --mount=type=cache,target=/root/.m2 \
     ./mvnw package -DskipTests -pl api-warehouse -am
 
 # === STAGE 2: Run ===
-FROM eclipse-temurin:26-jre
+FROM eclipse-temurin:25-jre
 WORKDIR /app
 COPY --from=builder /app/api-warehouse/target/*.jar app.jar
 
