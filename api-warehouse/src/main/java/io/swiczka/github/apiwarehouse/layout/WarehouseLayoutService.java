@@ -8,6 +8,7 @@ import io.swiczka.github.apiwarehouse.layout.dto.GridDataDto;
 import io.swiczka.github.apiwarehouse.layout.response.LayoutReadResponse;
 import io.swiczka.github.apiwarehouse.mapper.GridDataMapper;
 import io.swiczka.github.apiwarehouse.mapper.LayoutMapper;
+import io.swiczka.github.apiwarehouse.producers.LayoutEventProducer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,10 +20,12 @@ import java.util.UUID;
 @Service
 public class WarehouseLayoutService {
     private final LayoutDAO layoutDAO;
+    private final LayoutEventProducer layoutEventProducer;
 
     @Autowired
-    public WarehouseLayoutService(LayoutDAO layoutDAO) {
+    public WarehouseLayoutService(LayoutDAO layoutDAO, LayoutEventProducer layoutEventProducer) {
         this.layoutDAO = layoutDAO;
+        this.layoutEventProducer = layoutEventProducer;
     }
 
     @Transactional //spring.framework transactional
@@ -32,6 +35,8 @@ public class WarehouseLayoutService {
                 .toList();
         Layout newLayout = new Layout(operatorId, Instant.now(), 5, gridData);
         layoutDAO.save(newLayout);
+
+        layoutEventProducer.sendLayoutSaved(LayoutMapper.toEvent(newLayout));
         return LayoutMapper.toDto(newLayout);
     }
 

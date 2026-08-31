@@ -2,6 +2,7 @@ package io.swiczka.github.apiwarehouse.mapper;
 
 import io.swiczka.github.apiwarehouse.entity.Layout;
 import io.swiczka.github.apiwarehouse.layout.response.LayoutReadResponse;
+import io.swiczka.github.sharedcommon.events.LayoutSavedEvent;
 
 public final class LayoutMapper {
 
@@ -43,6 +44,22 @@ public final class LayoutMapper {
         layout.setId(dto.id());
 
         return layout;
+    }
+
+    public static LayoutSavedEvent toEvent(final Layout entity) {
+        if (entity == null) {
+            return null;
+        }
+
+        return new LayoutSavedEvent(
+                entity.getId(),
+                entity.getUserId(),
+                entity.getForkliftNumber(),
+                entity.getGridData() != null ?
+                        entity.getGridData().stream()
+                                .map(GridDataMapper::toEvent)
+                                .toList() : null
+        );
     }
 
 }

@@ -40,6 +40,7 @@ services:
       WAREHOUSE_HOST: api-warehouse
       FORKLIFT_HOST: api-forklift
       REDIS_HOST: redis
+
     ports:
       - "8080:8080"
     networks:
@@ -54,6 +55,8 @@ services:
       POSTGRES_WAREHOUSE_NAME: ${POSTGRES_WAREHOUSE_NAME}
       POSTGRES_WAREHOUSE_USER: ${POSTGRES_WAREHOUSE_USER}
       POSTGRES_WAREHOUSE_PASSWORD: ${POSTGRES_WAREHOUSE_PASSWORD}
+      KAFKA_HOST: kafka-1
+      KAFKA_PORT: 9092
     build:
       context: .
       dockerfile: api-warehouse/Dockerfile
@@ -72,6 +75,8 @@ services:
       POSTGRES_ORDER_NAME: ${POSTGRES_ORDER_NAME}
       POSTGRES_ORDER_USER: ${POSTGRES_ORDER_USER}
       POSTGRES_ORDER_PASSWORD: ${POSTGRES_ORDER_PASSWORD}
+      KAFKA_HOST: kafka-1
+      KAFKA_PORT: 9092
     build:
       context: .
       dockerfile: api-order/Dockerfile
@@ -90,6 +95,8 @@ services:
       POSTGRES_FORKLIFT_NAME: ${POSTGRES_FORKLIFT_NAME}
       POSTGRES_FORKLIFT_USER: ${POSTGRES_FORKLIFT_USER}
       POSTGRES_FORKLIFT_PASSWORD: ${POSTGRES_FORKLIFT_PASSWORD}
+      KAFKA_HOST: kafka-1
+      KAFKA_PORT: 9092
     build:
       context: .
       dockerfile: api-forklift/Dockerfile
@@ -102,6 +109,32 @@ services:
     image: redis:7-alpine
     ports:
       - "6379:6379"
+    networks:
+      - yaw-network
+  kafka-1:
+    image: apache/kafka:latest
+    container_name: yaw-kafka
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      # Listenery:
+      #   PLAINTEXT://0.0.0.0:9092 – wewnętrzny (kontener-do-kontenera)
+      #   CONTROLLER://0.0.0.0:9093 – wewnętrzny dla KRaft
+      #   EXTERNAL://0.0.0.0:29092 – zewnętrzny (IntelliJ na Windows → kontener)
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093,EXTERNAL://0.0.0.0:29092
+      # Advertised = adresy, które Kafka poda klientom "tu się łącz":
+      #   PLAINTEXT://kafka:9092 – inne kontenery łączą się po nazwie serwisu Docker
+      #   EXTERNAL://localhost:29092 – IntelliJ łączy się przez zmapowany port
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-1:9092,EXTERNAL://localhost:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT,EXTERNAL:PLAINTEXT
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@localhost:9093
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      # auto topic creation should be disabled in production environment
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    ports:
+      - "29092:29092"
     networks:
       - yaw-network
 

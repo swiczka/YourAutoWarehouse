@@ -2,6 +2,7 @@ package io.swiczka.github.apiwarehouse.mapper;
 
 import io.swiczka.github.apiwarehouse.domain.GridData;
 import io.swiczka.github.apiwarehouse.layout.dto.GridDataDto;
+import io.swiczka.github.sharedcommon.events.GridCellEvent;
 
 public final class GridDataMapper {
 
@@ -22,5 +23,13 @@ public final class GridDataMapper {
                 dto.coordinates(),
                 dto.isShelf(),
                 dto.isRoad());
+    }
+
+    public static GridCellEvent toEvent(final GridData domain){
+        if(domain == null) return null;
+        return new GridCellEvent(domain.allowedDirections(),
+                domain.coordinates(),
+                domain.isShelf(),
+                domain.isRoad());
     }
 }

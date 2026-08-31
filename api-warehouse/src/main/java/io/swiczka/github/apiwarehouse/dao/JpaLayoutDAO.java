@@ -20,8 +20,12 @@ public class JpaLayoutDAO implements LayoutDAO{
     }
 
     @Override
-    public void save(Layout layout) {
-        entityManager.merge(layout);
+    public void save(final Layout layout) {
+        if (layout.getId() == null) {
+            entityManager.persist(layout);
+        } else {
+            entityManager.merge(layout);
+        }
     }
 
     @Override
