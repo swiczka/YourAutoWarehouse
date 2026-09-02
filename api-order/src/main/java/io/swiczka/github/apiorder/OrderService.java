@@ -10,6 +10,7 @@ import io.swiczka.github.apiorder.enums.InboundOrderStatus;
 import io.swiczka.github.apiorder.enums.OutboundOrderStatus;
 import io.swiczka.github.apiorder.mapper.InboundOrderMapper;
 import io.swiczka.github.apiorder.mapper.OutboundOrderMapper;
+import io.swiczka.github.apiorder.producer.OrderEventProducer;
 import io.swiczka.github.apiorder.response.InboundOrderResponse;
 import io.swiczka.github.apiorder.response.OutboundOrderResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,11 +26,13 @@ public class OrderService {
 
     private final InboundOrderDAO inboundDAO;
     private final OutboundOrderDAO outboundDAO;
+    private final OrderEventProducer orderEventProducer;
 
     @Autowired
-    public OrderService(final InboundOrderDAO inboundDAO, final OutboundOrderDAO outboundDAO) {
+    public OrderService(final InboundOrderDAO inboundDAO, final OutboundOrderDAO outboundDAO, final OrderEventProducer orderEventProducer) {
         this.inboundDAO = inboundDAO;
         this.outboundDAO = outboundDAO;
+        this.orderEventProducer = orderEventProducer;
     }
 
     @Transactional
@@ -42,6 +45,9 @@ public class OrderService {
         );
 
         this.inboundDAO.save(newOrder);
+
+        orderEventProducer.sendOrderCreated(InboundOrderMapper.toEvent(newOrder));
+
         return InboundOrderMapper.toDto(newOrder);
     }
 
