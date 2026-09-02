@@ -6,6 +6,7 @@ import io.swiczka.github.apiforklift.domain.ForkliftTask;
 import io.swiczka.github.apiforklift.domain.SimulationLayout;
 import io.swiczka.github.apiforklift.dto.ForkliftTaskCreateDto;
 import io.swiczka.github.apiforklift.enums.TaskStatus;
+import io.swiczka.github.apiforklift.producer.ForkliftLocationEventProducer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,6 +17,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
 
 class SimulationEngineTest {
 
@@ -29,8 +31,9 @@ class SimulationEngineTest {
         forkliftRegistry = new ForkliftRegistry();
         layoutCache = new LayoutCache();
         taskRegistry = new ForkliftTaskRegistry();
+        ForkliftLocationEventProducer locationEventProducer = mock(ForkliftLocationEventProducer.class);
 
-        simulationEngine = new SimulationEngine(forkliftRegistry, layoutCache, taskRegistry);
+        simulationEngine = new SimulationEngine(forkliftRegistry, layoutCache, taskRegistry, locationEventProducer);
     }
 
     @Test

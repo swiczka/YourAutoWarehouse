@@ -8,25 +8,26 @@ spring:
     redis:
       host: ${REDIS_HOST:localhost}
       port: ${REDIS_PORT:6379}
-  main:
-    web-application-type: reactive
+  threads:
+    virtual:
+      enabled: true
+  kafka:
+    bootstrap-servers: ${KAFKA_HOST:localhost}:${KAFKA_PORT:29092}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    properties:
+      spring.json.trusted.packages: "io.swiczka.github.sharedcommon.events,io.swiczka.github.sharedcommon.helpers"
+    consumer:
+      group-id: gateway-service
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "io.swiczka.github.sharedcommon.events,io.swiczka.github.sharedcommon.helpers"
   cloud:
     gateway:
       server:
-        webflux:
-          default-filters:
-            - name: RequestSize
-              args:
-                maxSize: 1MB
-            - name: RequestHeaderSize
-              args:
-                maxSize: 16KB
-            - name: RequestRateLimiter
-              args:
-                redis-rate-limiter.replenishRate: 10   # ile requestów na sekundę
-                redis-rate-limiter.burstCapacity: 20   # maksymalny chwilowy skok
-                key-resolver: "#{@userKeyResolver}"    # nazwa beana w Javie
-
+        webmvc:
           routes:
             - id: order
               predicates:
@@ -40,3 +41,4 @@ spring:
               predicates:
                 - Path=/api/forklift/**,/api/forklift
               uri: http://${FORKLIFT_HOST:localhost}:8083
+

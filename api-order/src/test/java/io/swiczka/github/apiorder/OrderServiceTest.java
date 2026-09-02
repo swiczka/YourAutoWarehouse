@@ -8,6 +8,7 @@ import io.swiczka.github.apiorder.entity.InboundOrder;
 import io.swiczka.github.apiorder.entity.OutboundOrder;
 import io.swiczka.github.apiorder.enums.InboundOrderStatus;
 import io.swiczka.github.apiorder.enums.OutboundOrderStatus;
+import io.swiczka.github.apiorder.producer.OrderEventProducer;
 import io.swiczka.github.apiorder.response.InboundOrderResponse;
 import io.swiczka.github.apiorder.response.OutboundOrderResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,6 +37,9 @@ class OrderServiceTest {
 
     @Mock
     private OutboundOrderDAO outboundDAO;
+
+    @Mock
+    private OrderEventProducer orderEventProducer;
 
     @InjectMocks
     private OrderService orderService;

@@ -6,6 +6,8 @@ import io.swiczka.github.apiforklift.domain.SimulationLayout;
 import io.swiczka.github.apiforklift.dto.ForkliftCreateDto;
 import io.swiczka.github.apiforklift.enums.ForkliftStatus;
 import io.swiczka.github.apiforklift.enums.TaskStatus;
+import io.swiczka.github.apiforklift.producer.ForkliftLocationEventProducer;
+import io.swiczka.github.sharedcommon.events.ForkliftLocationEvent;
 import io.swiczka.github.sharedcommon.helpers.Coordinate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,14 +27,17 @@ public class SimulationEngine {
     private final ForkliftRegistry forkliftRegistry;
     private final LayoutCache layoutCache;
     private final ForkliftTaskRegistry taskRegistry;
+    private final ForkliftLocationEventProducer locationEventProducer;
 
     @Autowired
     public SimulationEngine(final ForkliftRegistry forkliftRegistry,
                             final LayoutCache layoutCache,
-                            final ForkliftTaskRegistry taskRegistry) {
+                            final ForkliftTaskRegistry taskRegistry,
+                            final ForkliftLocationEventProducer locationEventProducer) {
         this.forkliftRegistry = forkliftRegistry;
         this.layoutCache = layoutCache;
         this.taskRegistry = taskRegistry;
+        this.locationEventProducer = locationEventProducer;
     }
 
     @Scheduled(fixedRate = 500)
@@ -96,9 +102,19 @@ public class SimulationEngine {
             }
 
             forklift.nextStep();
-            System.out.printf("Forklift%d reached %d, %d%n",
-                            forklift.getId(),
-                            forklift.getX(), forklift.getY());
+            log.info("Forklift {} reached {}, {}",
+                    forklift.getId(),
+                    forklift.getX(),
+                    forklift.getY());
+
+            ForkliftLocationEvent event = new ForkliftLocationEvent(
+                    forklift.getId(),
+                    layout.getId(),
+                    forklift.getX(),
+                    forklift.getY(),
+                    Instant.now()
+            );
+            locationEventProducer.sendNewLocation(event);
 
             if (!forklift.hasPath()) {
                 handleDestinationReached(forklift, layout);
