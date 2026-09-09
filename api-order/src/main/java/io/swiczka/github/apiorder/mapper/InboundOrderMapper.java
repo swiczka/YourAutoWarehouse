@@ -2,8 +2,9 @@ package io.swiczka.github.apiorder.mapper;
 
 import io.swiczka.github.apiorder.entity.InboundOrder;
 import io.swiczka.github.apiorder.response.InboundOrderResponse;
-import io.swiczka.github.sharedcommon.events.LayoutSavedEvent;
-import io.swiczka.github.sharedcommon.events.OrderCreatedEvent;
+import io.swiczka.github.sharedcommon.events.InboundOrderCreatedEvent;
+
+import java.util.List;
 
 public class InboundOrderMapper {
     private InboundOrderMapper() {
@@ -14,6 +15,7 @@ public class InboundOrderMapper {
 
         return new InboundOrderResponse(
                 order.getId(),
+                order.getLayoutId(),
                 order.getOperatorId(),
                 order.getCreatedAt(),
                 order.getCompanyId(),
@@ -21,15 +23,17 @@ public class InboundOrderMapper {
         );
     }
 
-    public static OrderCreatedEvent toEvent(final InboundOrder entity) {
+    public static InboundOrderCreatedEvent toEvent(final InboundOrder entity, final List<String> packageNames) {
         if (entity == null) {
             return null;
         }
 
-        return new OrderCreatedEvent(
+        return new InboundOrderCreatedEvent(
                 entity.getId(),
                 entity.getOperatorId(),
-                entity.getCompanyId()
+                entity.getCompanyId(),
+                entity.getLayoutId(),
+                packageNames
         );
     }
 }

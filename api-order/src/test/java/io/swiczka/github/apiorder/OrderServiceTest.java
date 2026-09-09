@@ -48,6 +48,8 @@ class OrderServiceTest {
     private static final Long TEST_COMPANY_ID = 42L;
     private static final Long TEST_ORDER_ID = 1L;
     private static final Instant TEST_TIME = Instant.parse("2026-08-20T10:00:00Z");
+    private static final Long TEST_LAYOUT_ID = 24L;
+
 
     private InboundOrderCreateDto testInboundCreateDto;
     private InboundOrder testInboundOrder;
@@ -59,10 +61,12 @@ class OrderServiceTest {
     void setUp() {
         testInboundCreateDto = new InboundOrderCreateDto(
                 TEST_COMPANY_ID,
+                TEST_LAYOUT_ID,
                 List.of("Package-A", "Package-B")
         );
 
         testInboundOrder = new InboundOrder(
+                TEST_LAYOUT_ID,
                 TEST_OPERATOR_ID,
                 TEST_COMPANY_ID,
                 TEST_TIME,
@@ -72,10 +76,12 @@ class OrderServiceTest {
 
         testOutboundCreateDto = new OutboundOrderCreateDto(
                 TEST_COMPANY_ID,
+                TEST_LAYOUT_ID,
                 List.of(1, 2)
         );
 
         testOutboundOrder = new OutboundOrder(
+                TEST_LAYOUT_ID,
                 TEST_OPERATOR_ID,
                 TEST_COMPANY_ID,
                 TEST_TIME,
@@ -101,6 +107,7 @@ class OrderServiceTest {
             verify(inboundDAO).save(orderCaptor.capture());
             final InboundOrder savedEntity = orderCaptor.getValue();
 
+            assertThat(savedEntity.getLayoutId()).isEqualTo(TEST_LAYOUT_ID);
             assertThat(savedEntity.getOperatorId()).isEqualTo(TEST_OPERATOR_ID);
             assertThat(savedEntity.getCompanyId()).isEqualTo(TEST_COMPANY_ID);
             assertThat(savedEntity.getStatus()).isEqualTo(InboundOrderStatus.PENDING);
@@ -108,6 +115,7 @@ class OrderServiceTest {
 
             // then - what is returned
             assertThat(response).isNotNull();
+            assertThat(response.layoutId()).isEqualTo(TEST_LAYOUT_ID);
             assertThat(response.operatorId()).isEqualTo(TEST_OPERATOR_ID);
             assertThat(response.companyId()).isEqualTo(TEST_COMPANY_ID);
             assertThat(response.status()).isEqualTo(InboundOrderStatus.PENDING);
@@ -134,6 +142,7 @@ class OrderServiceTest {
 
             final InboundOrderResponse dto = result.getFirst();
             assertThat(dto.id()).isEqualTo(TEST_ORDER_ID);
+            assertThat(dto.layoutId()).isEqualTo(TEST_LAYOUT_ID);
             assertThat(dto.operatorId()).isEqualTo(TEST_OPERATOR_ID);
             assertThat(dto.companyId()).isEqualTo(TEST_COMPANY_ID);
             assertThat(dto.status()).isEqualTo(InboundOrderStatus.PENDING);
@@ -172,6 +181,7 @@ class OrderServiceTest {
             verify(outboundDAO).save(orderCaptor.capture());
             final OutboundOrder savedEntity = orderCaptor.getValue();
 
+            assertThat(savedEntity.getLayoutId()).isEqualTo(TEST_LAYOUT_ID);
             assertThat(savedEntity.getOperatorId()).isEqualTo(TEST_OPERATOR_ID);
             assertThat(savedEntity.getCompanyId()).isEqualTo(TEST_COMPANY_ID);
             assertThat(savedEntity.getStatus()).isEqualTo(OutboundOrderStatus.PENDING);
@@ -179,6 +189,7 @@ class OrderServiceTest {
 
             // then - what is returned
             assertThat(response).isNotNull();
+            assertThat(response.layoutId()).isEqualTo(TEST_LAYOUT_ID);
             assertThat(response.operatorId()).isEqualTo(TEST_OPERATOR_ID);
             assertThat(response.companyId()).isEqualTo(TEST_COMPANY_ID);
             assertThat(response.status()).isEqualTo(OutboundOrderStatus.PENDING);
@@ -205,6 +216,7 @@ class OrderServiceTest {
 
             final OutboundOrderResponse dto = result.getFirst();
             assertThat(dto.id()).isEqualTo(TEST_ORDER_ID);
+            assertThat(dto.layoutId()).isEqualTo(TEST_LAYOUT_ID);
             assertThat(dto.operatorId()).isEqualTo(TEST_OPERATOR_ID);
             assertThat(dto.companyId()).isEqualTo(TEST_COMPANY_ID);
             assertThat(dto.status()).isEqualTo(OutboundOrderStatus.PENDING);

@@ -1,0 +1,1 @@
+ALTER TABLE Layouts ADD COLUMN package_id bigint;

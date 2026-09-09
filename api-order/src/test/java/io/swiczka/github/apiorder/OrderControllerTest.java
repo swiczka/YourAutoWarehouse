@@ -43,11 +43,13 @@ class OrderControllerTest {
     private static final UUID TEST_OPERATOR_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");
     private static final Long TEST_COMPANY_ID = 42L;
     private static final Long TEST_ORDER_ID = 1L;
+    private static final Long TEST_LAYOUT_ID = 24L;
     private static final Instant TEST_TIME = Instant.parse("2026-08-20T10:00:00Z");
 
     private InboundOrderCreateDto createValidInboundDto() {
         return new InboundOrderCreateDto(
                 TEST_COMPANY_ID,
+                TEST_LAYOUT_ID,
                 List.of("Package-A", "Package-B")
         );
     }
@@ -55,6 +57,7 @@ class OrderControllerTest {
     private InboundOrderResponse createTestInboundResponse() {
         return new InboundOrderResponse(
                 TEST_ORDER_ID,
+                TEST_LAYOUT_ID,
                 TEST_OPERATOR_ID,
                 TEST_TIME,
                 TEST_COMPANY_ID,
@@ -65,6 +68,7 @@ class OrderControllerTest {
     private OutboundOrderCreateDto createValidOutboundDto() {
         return new OutboundOrderCreateDto(
                 TEST_COMPANY_ID,
+                TEST_LAYOUT_ID,
                 List.of(1, 2)
         );
     }
@@ -72,6 +76,7 @@ class OrderControllerTest {
     private OutboundOrderResponse createTestOutboundResponse() {
         return new OutboundOrderResponse(
                 TEST_ORDER_ID,
+                TEST_LAYOUT_ID,
                 TEST_OPERATOR_ID,
                 TEST_TIME,
                 TEST_COMPANY_ID,
@@ -99,6 +104,7 @@ class OrderControllerTest {
                             .content(mapper.writeValueAsString(requestBody)))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.id").value(TEST_ORDER_ID))
+                    .andExpect(jsonPath("$.layoutId").value(TEST_LAYOUT_ID))
                     .andExpect(jsonPath("$.operatorId").value(TEST_OPERATOR_ID.toString()))
                     .andExpect(jsonPath("$.companyId").value(TEST_COMPANY_ID))
                     .andExpect(jsonPath("$.status").value("PENDING"));
@@ -123,6 +129,7 @@ class OrderControllerTest {
             // given
             final InboundOrderCreateDto requestBody = new InboundOrderCreateDto(
                     null,
+                    TEST_LAYOUT_ID,
                     List.of("Package-A")
             );
 
@@ -140,6 +147,25 @@ class OrderControllerTest {
             // given
             final InboundOrderCreateDto requestBody = new InboundOrderCreateDto(
                     TEST_COMPANY_ID,
+                    TEST_LAYOUT_ID,
+                    List.of()
+            );
+
+            // when/then
+            mockMvc.perform(post("/api/order/inbound")
+                            .header("X-Guest-Id", TEST_OPERATOR_ID.toString())
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(mapper.writeValueAsString(requestBody)))
+                    .andExpect(status().isBadRequest());
+        }
+
+        @Test
+        @DisplayName("Should return 400 when layout id is null")
+        void addNewInboundOrder_nullLayoutId() throws Exception {
+            // given
+            final InboundOrderCreateDto requestBody = new InboundOrderCreateDto(
+                    TEST_COMPANY_ID,
+                    null,
                     List.of()
             );
 
@@ -162,6 +188,7 @@ class OrderControllerTest {
             );
             final InboundOrderCreateDto requestBody = new InboundOrderCreateDto(
                     TEST_COMPANY_ID,
+                    TEST_LAYOUT_ID,
                     tooManyPackages
             );
 
@@ -260,6 +287,7 @@ class OrderControllerTest {
                             .content(mapper.writeValueAsString(requestBody)))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.id").value(TEST_ORDER_ID))
+                    .andExpect(jsonPath("$.layoutId").value(TEST_LAYOUT_ID))
                     .andExpect(jsonPath("$.operatorId").value(TEST_OPERATOR_ID.toString()))
                     .andExpect(jsonPath("$.companyId").value(TEST_COMPANY_ID))
                     .andExpect(jsonPath("$.status").value("PENDING"));
@@ -284,6 +312,25 @@ class OrderControllerTest {
             // given
             final OutboundOrderCreateDto requestBody = new OutboundOrderCreateDto(
                     null,
+                    TEST_LAYOUT_ID,
+                    List.of(1)
+            );
+
+            // when/then
+            mockMvc.perform(post("/api/order/outbound")
+                            .header("X-Guest-Id", TEST_OPERATOR_ID.toString())
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(mapper.writeValueAsString(requestBody)))
+                    .andExpect(status().isBadRequest());
+        }
+
+        @Test
+        @DisplayName("Should return 400 when layoutId is null")
+        void addNewOutboundOrder_nullLayoutId() throws Exception {
+            // given
+            final OutboundOrderCreateDto requestBody = new OutboundOrderCreateDto(
+                    TEST_COMPANY_ID,
+                    null,
                     List.of(1)
             );
 
@@ -301,6 +348,7 @@ class OrderControllerTest {
             // given
             final OutboundOrderCreateDto requestBody = new OutboundOrderCreateDto(
                     TEST_COMPANY_ID,
+                    TEST_LAYOUT_ID,
                     List.of()
             );
 
@@ -332,6 +380,7 @@ class OrderControllerTest {
                     .andExpect(jsonPath("$").isArray())
                     .andExpect(jsonPath("$.length()").value(1))
                     .andExpect(jsonPath("$[0].id").value(TEST_ORDER_ID))
+                    .andExpect(jsonPath("$[0].layoutId").value(TEST_LAYOUT_ID))
                     .andExpect(jsonPath("$[0].operatorId").value(TEST_OPERATOR_ID.toString()))
                     .andExpect(jsonPath("$[0].companyId").value(TEST_COMPANY_ID))
                     .andExpect(jsonPath("$[0].status").value("PENDING"));

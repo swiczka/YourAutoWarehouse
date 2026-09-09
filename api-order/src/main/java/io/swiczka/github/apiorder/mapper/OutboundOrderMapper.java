@@ -16,6 +16,7 @@ public final class OutboundOrderMapper {
 
         return new OutboundOrderResponse(
                 order.getId(),
+                order.getLayoutId(),
                 order.getOperatorId(),
                 order.getCreatedAt(),
                 order.getCompanyId(),

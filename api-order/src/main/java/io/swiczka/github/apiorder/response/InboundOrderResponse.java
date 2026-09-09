@@ -8,6 +8,8 @@ import java.util.UUID;
 public record InboundOrderResponse(
         Long id,
 
+        Long layoutId,
+
         UUID operatorId, //related to browser userId
 
         Instant createdAt,

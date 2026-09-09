@@ -29,7 +29,7 @@ public final class GridDataMapper {
         if(domain == null) return null;
         return new GridCellEvent(domain.allowedDirections(),
                 domain.coordinates(),
-                domain.isShelf(),
-                domain.isRoad());
+                domain.isRoad(),
+                domain.isShelf());
     }
 }

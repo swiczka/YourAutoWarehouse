@@ -65,4 +65,20 @@ public class SimulationLayout {
     public Optional<SimulationGridData> getCell(final int x, final int y) {
         return getCell(new Coordinate(x, y));
     }
+
+    public int getMaxX() {
+        return this.simulationGridData.stream()
+                .filter(cell -> cell.coordinates() != null)
+                .mapToInt(cell -> cell.coordinates().x())
+                .max()
+                .orElse(0);
+    }
+
+    public int getMaxY() {
+        return this.simulationGridData.stream()
+                .filter(cell -> cell.coordinates() != null)
+                .mapToInt(cell -> cell.coordinates().y())
+                .max()
+                .orElse(0);
+    }
 }

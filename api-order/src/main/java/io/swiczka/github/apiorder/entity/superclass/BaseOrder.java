@@ -12,7 +12,9 @@ public abstract class BaseOrder {
     @Column(name = "id")
     private Long id;
 
-    //TODO: order has to be CONNECTED TO CERTAIN LAYOUT by ID!
+    @Column(name = "layout_id")
+    private Long layoutId;
+
     @Column(name = "operator_id")
     private UUID operatorId;
 
@@ -25,10 +27,19 @@ public abstract class BaseOrder {
     public BaseOrder() {
     }
 
-    public BaseOrder(UUID operatorId, Long companyId, Instant createdAt) {
+    public BaseOrder(Long layoutId, UUID operatorId, Long companyId, Instant createdAt) {
+        this.layoutId = layoutId;
         this.operatorId = operatorId;
         this.companyId = companyId;
         this.createdAt = createdAt;
+    }
+
+    public Long getLayoutId() {
+        return layoutId;
+    }
+
+    public void setLayoutId(Long layoutId) {
+        this.layoutId = layoutId;
     }
 
     public void setId(Long id) {

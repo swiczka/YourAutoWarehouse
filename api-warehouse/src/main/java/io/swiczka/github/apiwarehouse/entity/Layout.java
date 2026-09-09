@@ -7,6 +7,7 @@ import org.hibernate.type.SqlTypes;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.OptionalInt;
 import java.util.UUID;
 
 @Entity
@@ -29,6 +30,24 @@ public class Layout {
     @Column(name = "grid_data", columnDefinition = "jsonb")
     @JdbcTypeCode(SqlTypes.JSON)
     private List<GridData> gridData;
+
+    public int getMaxX(){
+        OptionalInt optResult = this.gridData
+                .stream()
+                .mapToInt(cell -> cell.coordinates().x())
+                .max();
+        return optResult
+                .orElse(0);
+    }
+
+    public int getMaxY(){
+        OptionalInt optResult = this.gridData
+                .stream()
+                .mapToInt(cell -> cell.coordinates().y())
+                .max();
+        return optResult
+                .orElse(0);
+    }
 
     public Layout() {
     }

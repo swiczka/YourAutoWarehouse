@@ -47,6 +47,14 @@ public class ForkliftTaskRegistry {
         return tasks;
     }
 
+    public ForkliftTask add(final ForkliftTaskCreateDto dto) {
+        if (dto == null) {
+            return null;
+        }
+        final List<ForkliftTask> tasks = add(List.of(dto));
+        return tasks.isEmpty() ? null : tasks.getFirst();
+    }
+
     public List<ForkliftTask> getByLayoutId(final Long layoutId) {
         if (layoutId == null) {
             return Collections.emptyList();

@@ -4,11 +4,11 @@ import io.swiczka.github.apiwarehouse.dao.LayoutDAO;
 import io.swiczka.github.apiwarehouse.domain.GridData;
 import io.swiczka.github.apiwarehouse.entity.Layout;
 import io.swiczka.github.apiwarehouse.exceptions.LayoutNotFoundException;
-import io.swiczka.github.apiwarehouse.producers.LayoutEventProducer;
 import io.swiczka.github.apiwarehouse.layout.dto.GridDataDto;
-import io.swiczka.github.sharedcommon.helpers.Direction;
 import io.swiczka.github.apiwarehouse.layout.response.LayoutReadResponse;
+import io.swiczka.github.apiwarehouse.producers.LayoutEventProducer;
 import io.swiczka.github.sharedcommon.helpers.Coordinate;
+import io.swiczka.github.sharedcommon.helpers.Direction;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -19,14 +19,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;

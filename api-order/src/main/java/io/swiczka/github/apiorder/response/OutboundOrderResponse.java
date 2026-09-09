@@ -7,6 +7,7 @@ import java.util.UUID;
 
 public record OutboundOrderResponse(
         Long id,
+        Long layoutId,
         UUID operatorId,
         Instant createdAt,
         Long companyId,

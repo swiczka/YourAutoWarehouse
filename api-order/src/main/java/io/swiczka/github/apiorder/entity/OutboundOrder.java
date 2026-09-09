@@ -18,8 +18,14 @@ public class OutboundOrder extends BaseOrder {
     public OutboundOrder() {
     }
 
-    public OutboundOrder(UUID operatorId, Long companyId, Instant createdAt, OutboundOrderStatus status) {
-        super(operatorId, companyId, createdAt);
+    public OutboundOrder(
+            final Long layoutId,
+            final UUID operatorId,
+            final Long companyId,
+            final Instant createdAt,
+            final OutboundOrderStatus status
+    ) {
+        super(layoutId, operatorId, companyId, createdAt);
         this.status = status;
     }
 

@@ -1,5 +1,6 @@
 package io.swiczka.github.apiwarehouse.entity;
 
+import io.swiczka.github.apiwarehouse.enums.PackageStatus;
 import jakarta.persistence.*;
 
 @Entity
@@ -20,20 +21,91 @@ public class PackageItem {
     private Long outboundOrderId;
 
     @Column(name = "x")
-    private int x;
+    private Integer x;
 
     @Column(name = "y")
-    private int y;
+    private Integer y;
+
+    @Column(name = "status")
+    @Enumerated(EnumType.STRING)
+    private PackageStatus status;
+
+    @Column(name = "layout_id")
+    private Long layoutId;
 
     public PackageItem() {
     }
 
-    public PackageItem(String name, Long inboundOrderId, Long outboundOrderId, int x, int y) {
+    public PackageItem(
+            final Long layoutId,
+            final String name,
+            final Long inboundOrderId,
+            final Long outboundOrderId,
+            final Integer x,
+            final Integer y,
+            final PackageStatus status
+    ) {
+        this.layoutId = layoutId;
         this.name = name;
         this.inboundOrderId = inboundOrderId;
         this.outboundOrderId = outboundOrderId;
         this.x = x;
         this.y = y;
+        this.status = status;
+    }
+
+    public PackageItem(
+            final Long layoutId,
+            final String name,
+            final Long inboundOrderId,
+            final PackageStatus status
+    ) {
+        this(layoutId, name, inboundOrderId, null, null, null, status);
+    }
+
+    public PackageItem(
+            final String name,
+            final Long inboundOrderId,
+            final Long outboundOrderId,
+            final Integer x,
+            final Integer y,
+            final PackageStatus status
+    ) {
+        this(null, name, inboundOrderId, outboundOrderId, x, y, status);
+    }
+
+    public PackageItem(
+            final String name,
+            final Long inboundOrderId,
+            final Long outboundOrderId,
+            final Integer x,
+            final Integer y
+    ) {
+        this(null, name, inboundOrderId, outboundOrderId, x, y, null);
+    }
+
+    public PackageItem(
+            final String name,
+            final Long inboundOrderId,
+            final PackageStatus status
+    ) {
+        this(null, name, inboundOrderId, null, null, null, status);
+    }
+
+    public Long getLayoutId() {
+        return layoutId;
+    }
+
+    public void setLayoutId(final Long layoutId) {
+        this.layoutId = layoutId;
+    }
+
+    public PackageStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(final PackageStatus status) {
+        this.status = status;
     }
 
     public void setId(Long id) {
@@ -67,19 +139,19 @@ public class PackageItem {
     public void setOutboundOrderId(Long outboundOrderId) {
         this.outboundOrderId = outboundOrderId;
     }
-    public int getX() {
+    public Integer getX() {
         return x;
     }
 
-    public void setX(int x) {
+    public void setX(final Integer x) {
         this.x = x;
     }
 
-    public int getY() {
+    public Integer getY() {
         return y;
     }
 
-    public void setY(int y) {
+    public void setY(final Integer y) {
         this.y = y;
     }
 }

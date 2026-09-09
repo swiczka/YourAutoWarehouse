@@ -19,12 +19,14 @@ class OutboundOrderMapperTest {
 
     private static final UUID TEST_OPERATOR_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");
     private static final Long TEST_COMPANY_ID = 42L;
+    private static final Long TEST_LAYOUT_ID = 24L;
     private static final Long TEST_ORDER_ID = 1L;
     private static final Instant TEST_TIME = Instant.parse("2026-08-20T10:00:00Z");
 
     @BeforeEach
     void setUp() {
         testOrder = new OutboundOrder(
+                TEST_LAYOUT_ID,
                 TEST_OPERATOR_ID,
                 TEST_COMPANY_ID,
                 TEST_TIME,
@@ -48,6 +50,7 @@ class OutboundOrderMapperTest {
             // then
             assertThat(result).isNotNull();
             assertThat(result.id()).isEqualTo(testOrder.getId());
+            assertThat(result.layoutId()).isEqualTo(testOrder.getLayoutId());
             assertThat(result.operatorId()).isEqualTo(testOrder.getOperatorId());
             assertThat(result.createdAt()).isEqualTo(testOrder.getCreatedAt());
             assertThat(result.companyId()).isEqualTo(testOrder.getCompanyId());
@@ -70,6 +73,7 @@ class OutboundOrderMapperTest {
             // given
             for (final OutboundOrderStatus status : OutboundOrderStatus.values()) {
                 final OutboundOrder orderWithStatus = new OutboundOrder(
+                        TEST_LAYOUT_ID,
                         TEST_OPERATOR_ID,
                         TEST_COMPANY_ID,
                         TEST_TIME,
@@ -82,6 +86,7 @@ class OutboundOrderMapperTest {
                 // then
                 assertThat(result).isNotNull();
                 assertThat(result.status()).isEqualTo(status);
+                assertThat(result.layoutId()).isEqualTo(TEST_LAYOUT_ID);
             }
         }
     }

@@ -38,6 +38,7 @@ public class OrderService {
     @Transactional
     public InboundOrderResponse addInboundOrder(final InboundOrderCreateDto dto, final UUID guestId) {
         final InboundOrder newOrder = new InboundOrder(
+                dto.layoutId(),
                 guestId,
                 dto.companyId(),
                 Instant.now(),
@@ -46,7 +47,7 @@ public class OrderService {
 
         this.inboundDAO.save(newOrder);
 
-        orderEventProducer.sendOrderCreated(InboundOrderMapper.toEvent(newOrder));
+        orderEventProducer.sendInboundOrderCreated(InboundOrderMapper.toEvent(newOrder, dto.packageNames()));
 
         return InboundOrderMapper.toDto(newOrder);
     }
@@ -62,6 +63,7 @@ public class OrderService {
     @Transactional
     public OutboundOrderResponse addOutboundOrder(final OutboundOrderCreateDto dto, final UUID guestId) {
         final OutboundOrder newOrder = new OutboundOrder(
+                dto.layoutId(),
                 guestId,
                 dto.companyId(),
                 Instant.now(),
