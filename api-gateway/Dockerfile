@@ -18,6 +18,7 @@ RUN --mount=type=cache,target=/root/.m2 \
 
 # Kopiujemy źródła i budujemy
 COPY api-gateway/src ./api-gateway/src
+COPY shared-common/src ./shared-common/src
 RUN --mount=type=cache,target=/root/.m2 \
     ./mvnw package -DskipTests -pl api-gateway -am
 

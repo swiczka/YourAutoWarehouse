@@ -35,7 +35,7 @@ spring:
               uri: http://${ORDER_HOST:localhost}:8081
             - id: warehouse
               predicates:
-                - Path=/api/warehouse/**,/api/warehouse
+                - Path=/api/warehouse/**,/api/warehouse,/api/package/**,/api/package
               uri: http://${WAREHOUSE_HOST:localhost}:8082
             - id: forklift
               predicates:

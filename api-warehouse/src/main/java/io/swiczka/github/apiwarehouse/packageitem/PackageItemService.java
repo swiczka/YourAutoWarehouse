@@ -5,7 +5,11 @@ import io.swiczka.github.apiwarehouse.dao.PackageItemDAO;
 import io.swiczka.github.apiwarehouse.entity.Layout;
 import io.swiczka.github.apiwarehouse.entity.PackageItem;
 import io.swiczka.github.apiwarehouse.enums.PackageStatus;
+import io.swiczka.github.apiwarehouse.exceptions.ForbiddenException;
 import io.swiczka.github.apiwarehouse.exceptions.LayoutNotFoundException;
+import io.swiczka.github.apiwarehouse.layout.dto.LayoutOwnerDto;
+import io.swiczka.github.apiwarehouse.mapper.PackageItemMapper;
+import io.swiczka.github.apiwarehouse.packageitem.response.PackageItemResponse;
 import io.swiczka.github.apiwarehouse.producers.PackageEventProducer;
 import io.swiczka.github.apiwarehouse.strategy.PackagePlacementStrategy;
 import io.swiczka.github.sharedcommon.events.PackageAllocatedEvent;
@@ -16,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 @Service
 @Transactional
@@ -27,7 +32,12 @@ public class PackageItemService {
     private final PackageEventProducer eventProducer;
 
     @Autowired
-    public PackageItemService(final PackageItemDAO packageDAO, PackagePlacementStrategy packagePlacementStrategy, LayoutDAO layoutDAO, PackageEventProducer eventProducer) {
+    public PackageItemService(
+            final PackageItemDAO packageDAO,
+            final PackagePlacementStrategy packagePlacementStrategy,
+            final LayoutDAO layoutDAO,
+            final PackageEventProducer eventProducer
+    ) {
         this.packageDAO = packageDAO;
         this.packagePlacementStrategy = packagePlacementStrategy;
         this.layoutDAO = layoutDAO;
@@ -69,5 +79,50 @@ public class PackageItemService {
 
             eventProducer.sendPackageAllocated(event);
         }
+    }
+
+    public List<PackageItemResponse> getPackagesByInboundOrderId(
+            final Long inboundOrderId,
+            final UUID userId
+    ) {
+        final List<PackageItem> packages = packageDAO.findByInboundOrderId(inboundOrderId);
+        if (packages.isEmpty()) {
+            return List.of();
+        }
+
+        final Long layoutId = packages.getFirst().getLayoutId();
+        final LayoutOwnerDto owner = layoutDAO.findOwnerById(layoutId)
+                .orElseThrow(() -> new LayoutNotFoundException(layoutId));
+
+        final boolean isOwner = owner.userId().equals(userId);
+        if (!isOwner) {
+            throw new ForbiddenException("Access denied to packages for order with id " + inboundOrderId);
+        }
+
+        return packages.stream()
+                .map(PackageItemMapper::toDto)
+                .toList();
+    }
+
+    public List<PackageItemResponse> getPackagesByLayoutId(
+            final Long layoutId,
+            final UUID userId
+    ) {
+        final List<PackageItem> packages = packageDAO.findByLayoutId(layoutId);
+        if (packages.isEmpty()) {
+            return List.of();
+        }
+
+        final LayoutOwnerDto owner = layoutDAO.findOwnerById(layoutId)
+                .orElseThrow(() -> new LayoutNotFoundException(layoutId));
+
+        final boolean isOwner = owner.userId().equals(userId);
+        if (!isOwner) {
+            throw new ForbiddenException("Access denied to packages for layout with id " + layoutId);
+        }
+
+        return packages.stream()
+                .map(PackageItemMapper::toDto)
+                .toList();
     }
 }
