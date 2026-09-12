@@ -14,17 +14,22 @@ import io.swiczka.github.apiwarehouse.producers.PackageEventProducer;
 import io.swiczka.github.apiwarehouse.strategy.PackagePlacementStrategy;
 import io.swiczka.github.sharedcommon.events.PackageAllocatedEvent;
 import io.swiczka.github.sharedcommon.helpers.Coordinate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
 @Service
 @Transactional
 public class PackageItemService {
+
+    private static final Logger log = LoggerFactory.getLogger(PackageItemService.class);
 
     private final PackageItemDAO packageDAO;
     private final PackagePlacementStrategy packagePlacementStrategy;
@@ -50,10 +55,12 @@ public class PackageItemService {
             final Long layoutId
     ) {
 
-        Layout layout = layoutDAO.findById(layoutId)
+        final Layout layout = layoutDAO.findById(layoutId)
                 .orElseThrow(() -> new LayoutNotFoundException(layoutId));
 
         final Set<Coordinate> occupiedSpots = packageDAO.findOccupiedCoordinates(layoutId);
+        final int currentX = 0;
+        final int currentY = layout.getMaxY();
 
         for (final String name : packageNames) {
             final Coordinate targetSpot = packagePlacementStrategy.findTargetLocation(layout, occupiedSpots);
@@ -69,10 +76,14 @@ public class PackageItemService {
             );
             packageDAO.save(item);
 
-            PackageAllocatedEvent event = new PackageAllocatedEvent(
+            final PackageAllocatedEvent event = new PackageAllocatedEvent(
                     item.getId(),
                     layoutId,
+                    inboundOrderId,
                     name,
+                    PackageStatus.ALLOCATED.name(),
+                    currentX,
+                    currentY,
                     targetSpot.x(),
                     targetSpot.y()
             );
@@ -124,5 +135,19 @@ public class PackageItemService {
         return packages.stream()
                 .map(PackageItemMapper::toDto)
                 .toList();
+    }
+
+    public void markPackageAsStored(final Long packageId, final int x, final int y) {
+        final Optional<PackageItem> packageOpt = packageDAO.findById(packageId);
+        if (packageOpt.isEmpty()) {
+            log.warn("Cannot store package. Package with ID: {} not found", packageId);
+            return;
+        }
+
+        final PackageItem pkg = packageOpt.get();
+        pkg.setX(x);
+        pkg.setY(y);
+        pkg.setStatus(PackageStatus.STORED);
+        packageDAO.save(pkg);
     }
 }

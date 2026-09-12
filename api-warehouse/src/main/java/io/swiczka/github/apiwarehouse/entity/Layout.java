@@ -31,22 +31,26 @@ public class Layout {
     @JdbcTypeCode(SqlTypes.JSON)
     private List<GridData> gridData;
 
-    public int getMaxX(){
-        OptionalInt optResult = this.gridData
+    public int getMaxX() {
+        if (this.gridData == null || this.gridData.isEmpty()) {
+            return 0;
+        }
+        final OptionalInt optResult = this.gridData
                 .stream()
                 .mapToInt(cell -> cell.coordinates().x())
                 .max();
-        return optResult
-                .orElse(0);
+        return optResult.orElse(0);
     }
 
-    public int getMaxY(){
-        OptionalInt optResult = this.gridData
+    public int getMaxY() {
+        if (this.gridData == null || this.gridData.isEmpty()) {
+            return 0;
+        }
+        final OptionalInt optResult = this.gridData
                 .stream()
                 .mapToInt(cell -> cell.coordinates().y())
                 .max();
-        return optResult
-                .orElse(0);
+        return optResult.orElse(0);
     }
 
     public Layout() {

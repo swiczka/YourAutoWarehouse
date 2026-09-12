@@ -7,7 +7,11 @@ import io.swiczka.github.apiforklift.dto.ForkliftCreateDto;
 import io.swiczka.github.apiforklift.enums.ForkliftStatus;
 import io.swiczka.github.apiforklift.enums.TaskStatus;
 import io.swiczka.github.apiforklift.producer.ForkliftLocationEventProducer;
+import io.swiczka.github.apiforklift.producer.PackagePickedEventProducer;
+import io.swiczka.github.apiforklift.producer.PackageStoredEventProducer;
 import io.swiczka.github.sharedcommon.events.ForkliftLocationEvent;
+import io.swiczka.github.sharedcommon.events.PackagePickedEvent;
+import io.swiczka.github.sharedcommon.events.PackageStoredEvent;
 import io.swiczka.github.sharedcommon.helpers.Coordinate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,16 +32,21 @@ public class SimulationEngine {
     private final LayoutCache layoutCache;
     private final ForkliftTaskRegistry taskRegistry;
     private final ForkliftLocationEventProducer locationEventProducer;
+    private final PackageStoredEventProducer packageStoredEventProducer;
+    private final PackagePickedEventProducer packagePickedEventProducer;
 
     @Autowired
     public SimulationEngine(final ForkliftRegistry forkliftRegistry,
                             final LayoutCache layoutCache,
                             final ForkliftTaskRegistry taskRegistry,
-                            final ForkliftLocationEventProducer locationEventProducer) {
+                            final ForkliftLocationEventProducer locationEventProducer,
+                            final PackageStoredEventProducer packageStoredEventProducer, PackagePickedEventProducer packagePickedEventProducer) {
         this.forkliftRegistry = forkliftRegistry;
         this.layoutCache = layoutCache;
         this.taskRegistry = taskRegistry;
         this.locationEventProducer = locationEventProducer;
+        this.packageStoredEventProducer = packageStoredEventProducer;
+        this.packagePickedEventProducer = packagePickedEventProducer;
     }
 
     @Scheduled(fixedRate = 500)
@@ -152,6 +161,15 @@ public class SimulationEngine {
                     : pathToTarget;
             forklift.setPath(steps);
             log.info("Forklift {} picked up package {}. Heading to target {}", forklift.getId(), task.getPackageId(), target);
+
+            PackagePickedEvent event = new PackagePickedEvent(
+                    task.getPackageId(),
+                    task.getAssignedForkliftId(),
+                    task.getLayoutId()
+            );
+
+            packagePickedEventProducer.sendPackagePickedEvent(event);
+
             return;
         }
 
@@ -159,11 +177,18 @@ public class SimulationEngine {
         log.info("Forklift {} delivered package {} to target ({}, {})",
                 forklift.getId(), task.getPackageId(), task.getTargetX(), task.getTargetY());
 
+        //send event about new package location
+        final PackageStoredEvent event = new PackageStoredEvent(
+            task.getPackageId(),
+                task.getLayoutId(),
+                task.getTargetX(),
+                task.getTargetY()
+        );
+        packageStoredEventProducer.sendPackageStoredEvent(event);
+
         forklift.setCurrentPackageId(null);
         forklift.setCurrentTaskId(null);
         task.setStatus(TaskStatus.COMPLETE);
-
-        //TODO - here we can communicate about new package location
 
         // return to the garage
         final Coordinate current = new Coordinate(forklift.getX(), forklift.getY());

@@ -7,6 +7,8 @@ import io.swiczka.github.apiforklift.domain.SimulationLayout;
 import io.swiczka.github.apiforklift.dto.ForkliftTaskCreateDto;
 import io.swiczka.github.apiforklift.enums.TaskStatus;
 import io.swiczka.github.apiforklift.producer.ForkliftLocationEventProducer;
+import io.swiczka.github.apiforklift.producer.PackagePickedEventProducer;
+import io.swiczka.github.apiforklift.producer.PackageStoredEventProducer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,17 +25,26 @@ class SimulationEngineTest {
 
     private ForkliftRegistry forkliftRegistry;
     private LayoutCache layoutCache;
-    private SimulationEngine simulationEngine;
     private ForkliftTaskRegistry taskRegistry;
+    private SimulationEngine simulationEngine;
 
     @BeforeEach
     void setUp() {
         forkliftRegistry = new ForkliftRegistry();
         layoutCache = new LayoutCache();
         taskRegistry = new ForkliftTaskRegistry();
+        PackageStoredEventProducer packageStoredEventProducer = mock(PackageStoredEventProducer.class);
         ForkliftLocationEventProducer locationEventProducer = mock(ForkliftLocationEventProducer.class);
+        PackagePickedEventProducer packagePickedEventProducer = mock(PackagePickedEventProducer.class);
 
-        simulationEngine = new SimulationEngine(forkliftRegistry, layoutCache, taskRegistry, locationEventProducer);
+        simulationEngine = new SimulationEngine(
+                forkliftRegistry,
+                layoutCache,
+                taskRegistry,
+                locationEventProducer,
+                packageStoredEventProducer,
+                packagePickedEventProducer
+        );
     }
 
     @Test
@@ -61,8 +72,7 @@ class SimulationEngineTest {
     void shouldAssignPendingTaskAndMoveForklift() throws Exception {
         // given - load real sample layout
         final ObjectMapper mapper = new ObjectMapper();
-        final ClassPathResource resource =
-                new ClassPathResource("data/sample_layout.json");
+        final ClassPathResource resource = new ClassPathResource("data/sample_layout.json");
         final SimulationLayout layout;
         try (final java.io.InputStream is = resource.getInputStream()) {
             layout = mapper.readValue(is, SimulationLayout.class);

@@ -22,6 +22,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -176,6 +177,54 @@ class PackageItemServiceTest {
             // when / then
             assertThatThrownBy(() -> packageItemService.getPackagesByInboundOrderId(inboundOrderId, TEST_USER_ID))
                     .isInstanceOf(LayoutNotFoundException.class);
+        }
+    }
+
+    @Nested
+    @DisplayName("markPackageAsStored tests")
+    class MarkPackageAsStored {
+
+        @Test
+        @DisplayName("Should update coordinates, set status to STORED, and save package when found")
+        void markPackageAsStored_packageFound() {
+            // given
+            final Long packageId = 1L;
+            final int newX = 3;
+            final int newY = 4;
+            final PackageItem existingPackage = new PackageItem(
+                    10L,
+                    "Package1",
+                    100L,
+                    null,
+                    0,
+                    0,
+                    PackageStatus.ALLOCATED
+            );
+
+            when(packageDAO.findById(packageId)).thenReturn(Optional.of(existingPackage));
+
+            // when
+            packageItemService.markPackageAsStored(packageId, newX, newY);
+
+            // then
+            assertThat(existingPackage.getX()).isEqualTo(newX);
+            assertThat(existingPackage.getY()).isEqualTo(newY);
+            assertThat(existingPackage.getStatus()).isEqualTo(PackageStatus.STORED);
+            verify(packageDAO).save(existingPackage);
+        }
+
+        @Test
+        @DisplayName("Should not throw and not save package when package not found")
+        void markPackageAsStored_packageNotFound() {
+            // given
+            final Long packageId = 999L;
+            when(packageDAO.findById(packageId)).thenReturn(Optional.empty());
+
+            // when
+            packageItemService.markPackageAsStored(packageId, 3, 4);
+
+            // then
+            verify(packageDAO, never()).save(any());
         }
     }
 }
