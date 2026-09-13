@@ -38,7 +38,8 @@ public class ForkliftTaskRegistry {
                     dto.sourceX(),
                     dto.sourceY(),
                     dto.targetX(),
-                    dto.targetY()
+                    dto.targetY(),
+                    dto.taskType()
             );
             task.setStatus(TaskStatus.PENDING);
             this.taskMap.put(newId, task);

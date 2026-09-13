@@ -2,6 +2,9 @@ package io.swiczka.github.apiorder.mapper;
 
 import io.swiczka.github.apiorder.entity.OutboundOrder;
 import io.swiczka.github.apiorder.response.OutboundOrderResponse;
+import io.swiczka.github.sharedcommon.events.OutboundOrderCreatedEvent;
+
+import java.util.List;
 
 public final class OutboundOrderMapper {
 
@@ -21,6 +24,20 @@ public final class OutboundOrderMapper {
                 order.getCreatedAt(),
                 order.getCompanyId(),
                 order.getStatus()
+        );
+    }
+
+    public static OutboundOrderCreatedEvent toEvent(final OutboundOrder entity, final List<Long> packageIds) {
+        if (entity == null) {
+            return null;
+        }
+
+        return new OutboundOrderCreatedEvent(
+                entity.getId(),
+                entity.getOperatorId(),
+                entity.getCompanyId(),
+                entity.getLayoutId(),
+                packageIds
         );
     }
 }

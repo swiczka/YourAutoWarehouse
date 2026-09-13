@@ -69,7 +69,7 @@ class OrderControllerTest {
         return new OutboundOrderCreateDto(
                 TEST_COMPANY_ID,
                 TEST_LAYOUT_ID,
-                List.of(1, 2)
+                List.of(1L, 2L)
         );
     }
 
@@ -313,7 +313,7 @@ class OrderControllerTest {
             final OutboundOrderCreateDto requestBody = new OutboundOrderCreateDto(
                     null,
                     TEST_LAYOUT_ID,
-                    List.of(1)
+                    List.of(1L)
             );
 
             // when/then
@@ -331,7 +331,7 @@ class OrderControllerTest {
             final OutboundOrderCreateDto requestBody = new OutboundOrderCreateDto(
                     TEST_COMPANY_ID,
                     null,
-                    List.of(1)
+                    List.of(1L)
             );
 
             // when/then

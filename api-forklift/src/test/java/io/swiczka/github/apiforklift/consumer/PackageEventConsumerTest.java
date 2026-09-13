@@ -1,9 +1,11 @@
 package io.swiczka.github.apiforklift.consumer;
 
 import io.swiczka.github.apiforklift.dto.ForkliftTaskCreateDto;
+import io.swiczka.github.apiforklift.enums.TaskType;
 import io.swiczka.github.apiforklift.simulation.ForkliftTaskRegistry;
 import io.swiczka.github.apiforklift.simulation.LayoutCache;
 import io.swiczka.github.sharedcommon.events.PackageAllocatedEvent;
+import io.swiczka.github.sharedcommon.events.PackageShouldBeSentEvent;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -65,5 +67,45 @@ class PackageEventConsumerTest {
         assertThat(createdDto.sourceY()).isEqualTo(currentY);
         assertThat(createdDto.targetX()).isEqualTo(targetX);
         assertThat(createdDto.targetY()).isEqualTo(targetY);
+        assertThat(createdDto.taskType()).isEqualTo(TaskType.INBOUND);
+    }
+
+    @Test
+    @DisplayName("Should create outbound forklift task when package should be sent")
+    void handlePackageShouldBeSent_createsOutboundTaskWithCoordinatesFromEvent() {
+        // given
+        final Long layoutId = 5L;
+        final Long packageId = 42L;
+        final Long outboundOrderId = 20L;
+        final int currentX = 3;
+        final int currentY = 7;
+        final int targetX = 15;
+        final int targetY = 12;
+
+        final PackageShouldBeSentEvent event = new PackageShouldBeSentEvent(
+                packageId,
+                layoutId,
+                outboundOrderId,
+                currentX,
+                currentY,
+                targetX,
+                targetY
+        );
+
+        // when
+        packageEventConsumer.handlePackageShouldBeSent(event);
+
+        // then
+        final ArgumentCaptor<ForkliftTaskCreateDto> captor = ArgumentCaptor.forClass(ForkliftTaskCreateDto.class);
+        verify(taskRegistry).add(captor.capture());
+
+        final ForkliftTaskCreateDto createdDto = captor.getValue();
+        assertThat(createdDto.packageItemId()).isEqualTo(packageId);
+        assertThat(createdDto.layoutId()).isEqualTo(layoutId);
+        assertThat(createdDto.sourceX()).isEqualTo(currentX);
+        assertThat(createdDto.sourceY()).isEqualTo(currentY);
+        assertThat(createdDto.targetX()).isEqualTo(targetX);
+        assertThat(createdDto.targetY()).isEqualTo(targetY);
+        assertThat(createdDto.taskType()).isEqualTo(TaskType.OUTBOUND);
     }
 }

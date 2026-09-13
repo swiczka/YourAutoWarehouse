@@ -77,7 +77,7 @@ class OrderServiceTest {
         testOutboundCreateDto = new OutboundOrderCreateDto(
                 TEST_COMPANY_ID,
                 TEST_LAYOUT_ID,
-                List.of(1, 2)
+                List.of(1L, 2L)
         );
 
         testOutboundOrder = new OutboundOrder(

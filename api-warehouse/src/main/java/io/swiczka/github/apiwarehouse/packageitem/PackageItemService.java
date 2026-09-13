@@ -12,7 +12,9 @@ import io.swiczka.github.apiwarehouse.mapper.PackageItemMapper;
 import io.swiczka.github.apiwarehouse.packageitem.response.PackageItemResponse;
 import io.swiczka.github.apiwarehouse.producers.PackageEventProducer;
 import io.swiczka.github.apiwarehouse.strategy.PackagePlacementStrategy;
+import io.swiczka.github.sharedcommon.events.OutboundOrderCreatedEvent;
 import io.swiczka.github.sharedcommon.events.PackageAllocatedEvent;
+import io.swiczka.github.sharedcommon.events.PackageShouldBeSentEvent;
 import io.swiczka.github.sharedcommon.helpers.Coordinate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -89,6 +91,46 @@ public class PackageItemService {
             );
 
             eventProducer.sendPackageAllocated(event);
+        }
+    }
+
+    public void handleOutboundOrder(OutboundOrderCreatedEvent event) {
+        final Layout layout = layoutDAO.findById(event.layoutId())
+                .orElseThrow(() -> new LayoutNotFoundException(event.layoutId()));
+
+        if(!layout.getUserId().equals(event.operatorId())){
+            //TODO in future it could send an event about rejected order - for now it's just ignored
+            throw new ForbiddenException("Access denied to packages for order with id " + event.orderId());
+        }
+
+        final int targetX = layout.getMaxX();
+        final int targetY = layout.getMaxY();
+
+        for(Long pkgId : event.packageIds()){
+            Optional<PackageItem> optPkg = packageDAO.findById(pkgId);
+            if(optPkg.isEmpty()){
+                //silent error
+                log.warn("Tried sending non-existing package {}", pkgId);
+                continue;
+            }
+
+            PackageItem pkg = optPkg.get();
+
+            pkg.setStatus(PackageStatus.SENDING);
+
+            packageDAO.save(pkg);
+
+            PackageShouldBeSentEvent newEvent = new PackageShouldBeSentEvent(
+                pkg.getId(),
+                layout.getId(),
+                event.orderId(),
+                pkg.getX(),
+                pkg.getY(),
+                targetX,
+                targetY
+            );
+
+            eventProducer.sendPackageShouldBeSent(newEvent);
         }
     }
 

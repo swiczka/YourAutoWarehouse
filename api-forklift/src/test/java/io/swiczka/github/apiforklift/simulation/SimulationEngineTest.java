@@ -6,6 +6,7 @@ import io.swiczka.github.apiforklift.domain.ForkliftTask;
 import io.swiczka.github.apiforklift.domain.SimulationLayout;
 import io.swiczka.github.apiforklift.dto.ForkliftTaskCreateDto;
 import io.swiczka.github.apiforklift.enums.TaskStatus;
+import io.swiczka.github.apiforklift.enums.TaskType;
 import io.swiczka.github.apiforklift.producer.ForkliftLocationEventProducer;
 import io.swiczka.github.apiforklift.producer.PackagePickedEventProducer;
 import io.swiczka.github.apiforklift.producer.PackageStoredEventProducer;
@@ -81,7 +82,7 @@ class SimulationEngineTest {
 
         // create a task on sample layout: source (0, 1), target (2, 0)
         final ForkliftTaskCreateDto taskDto =
-                new ForkliftTaskCreateDto(555L, layout.getId(), 0, 1, 2, 0);
+                new ForkliftTaskCreateDto(555L, layout.getId(), 0, 1, 2, 0, TaskType.INBOUND);
         final List<ForkliftTask> addedTasks = taskRegistry.add(List.of(taskDto));
         final ForkliftTask task = addedTasks.getFirst();
 

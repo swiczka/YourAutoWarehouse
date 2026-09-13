@@ -6,6 +6,7 @@ import io.swiczka.github.apiforklift.domain.SimulationLayout;
 import io.swiczka.github.apiforklift.dto.ForkliftCreateDto;
 import io.swiczka.github.apiforklift.enums.ForkliftStatus;
 import io.swiczka.github.apiforklift.enums.TaskStatus;
+import io.swiczka.github.apiforklift.enums.TaskType;
 import io.swiczka.github.apiforklift.producer.ForkliftLocationEventProducer;
 import io.swiczka.github.apiforklift.producer.PackagePickedEventProducer;
 import io.swiczka.github.apiforklift.producer.PackageStoredEventProducer;
@@ -174,17 +175,21 @@ public class SimulationEngine {
         }
 
         // forklift carried package to its destination
-        log.info("Forklift {} delivered package {} to target ({}, {})",
-                forklift.getId(), task.getPackageId(), task.getTargetX(), task.getTargetY());
+        log.info("Forklift {} delivered package {} to target ({}, {}) [taskType={}]",
+                forklift.getId(), task.getPackageId(), task.getTargetX(), task.getTargetY(), task.getTaskType());
 
-        //send event about new package location
-        final PackageStoredEvent event = new PackageStoredEvent(
-            task.getPackageId(),
-                task.getLayoutId(),
-                task.getTargetX(),
-                task.getTargetY()
-        );
-        packageStoredEventProducer.sendPackageStoredEvent(event);
+        if (task.getTaskType() == TaskType.INBOUND) {
+            final PackageStoredEvent event = new PackageStoredEvent(
+                    task.getPackageId(),
+                    task.getLayoutId(),
+                    task.getTargetX(),
+                    task.getTargetY()
+            );
+            packageStoredEventProducer.sendPackageStoredEvent(event);
+        } else if (task.getTaskType() == TaskType.OUTBOUND) {
+            log.info("Forklift {} delivered outbound package {} to drop zone ({}, {})",
+                    forklift.getId(), task.getPackageId(), task.getTargetX(), task.getTargetY());
+        }
 
         forklift.setCurrentPackageId(null);
         forklift.setCurrentTaskId(null);

@@ -3,6 +3,7 @@ package io.swiczka.github.apiforklift.simulation;
 import io.swiczka.github.apiforklift.domain.ForkliftTask;
 import io.swiczka.github.apiforklift.dto.ForkliftTaskCreateDto;
 import io.swiczka.github.apiforklift.enums.TaskStatus;
+import io.swiczka.github.apiforklift.enums.TaskType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -29,9 +30,9 @@ class ForkliftTaskRegistryTest {
         final Long layout2 = 20L;
 
         final List<ForkliftTaskCreateDto> dtos = List.of(
-                new ForkliftTaskCreateDto(1L, layout1, 0, 0, 5, 5),
-                new ForkliftTaskCreateDto(2L, layout1, 0, 0, 6, 6),
-                new ForkliftTaskCreateDto(3L, layout2, 0, 0, 7, 7)
+                new ForkliftTaskCreateDto(1L, layout1, 0, 0, 5, 5, TaskType.INBOUND),
+                new ForkliftTaskCreateDto(2L, layout1, 0, 0, 6, 6, TaskType.INBOUND),
+                new ForkliftTaskCreateDto(3L, layout2, 0, 0, 7, 7, TaskType.OUTBOUND)
         );
 
         // when
@@ -67,7 +68,7 @@ class ForkliftTaskRegistryTest {
     void shouldGetByIdAndRemove() {
         // given
         final List<ForkliftTaskCreateDto> dtos = List.of(
-                new ForkliftTaskCreateDto(100L, 5L, 0, 0, 1, 1)
+                new ForkliftTaskCreateDto(100L, 5L, 0, 0, 1, 1, TaskType.INBOUND)
         );
         final List<ForkliftTask> added = taskRegistry.add(dtos);
         final Long taskId = added.getFirst().getTaskId();

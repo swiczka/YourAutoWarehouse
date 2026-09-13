@@ -2,6 +2,7 @@ package io.swiczka.github.apiwarehouse.consumer;
 
 import io.swiczka.github.apiwarehouse.packageitem.PackageItemService;
 import io.swiczka.github.sharedcommon.events.InboundOrderCreatedEvent;
+import io.swiczka.github.sharedcommon.events.OutboundOrderCreatedEvent;
 import io.swiczka.github.sharedcommon.topics.KafkaTopics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,5 +29,11 @@ public class OrderEventConsumer {
                 event.orderId(),
                 event.layoutId()
         );
+    }
+
+    @KafkaListener(topics = KafkaTopics.OUTBOUND_ORDER_CREATED, groupId = "warehouse-service")
+    public void handleOutboundOrderCreated(final OutboundOrderCreatedEvent event) {
+        log.info("Received OutboundOrderCreatedEvent for orderId={}", event.orderId());
+        packageService.handleOutboundOrder(event);
     }
 }

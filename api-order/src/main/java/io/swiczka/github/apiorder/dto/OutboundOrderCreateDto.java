@@ -14,5 +14,5 @@ public record OutboundOrderCreateDto(
         Long layoutId,
 
         @Size(min = 1, max = 15, message = "There must be 1-15 packages provided")
-        List<@NotNull Integer> packageIds //list size equals order size
+        List<@NotNull Long> packageIds //list size equals order size
 ) { }

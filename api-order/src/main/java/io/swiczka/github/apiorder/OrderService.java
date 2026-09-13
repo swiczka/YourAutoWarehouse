@@ -71,6 +71,9 @@ public class OrderService {
         );
 
         this.outboundDAO.save(newOrder);
+
+        this.orderEventProducer.sendOutboundOrderCreated(OutboundOrderMapper.toEvent(newOrder, dto.packageIds()));
+
         return OutboundOrderMapper.toDto(newOrder);
     }
 
