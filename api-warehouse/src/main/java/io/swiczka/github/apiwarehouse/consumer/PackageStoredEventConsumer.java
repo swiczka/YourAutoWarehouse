@@ -1,6 +1,7 @@
 package io.swiczka.github.apiwarehouse.consumer;
 
 import io.swiczka.github.apiwarehouse.packageitem.PackageItemService;
+import io.swiczka.github.sharedcommon.events.PackageDroppedEvent;
 import io.swiczka.github.sharedcommon.events.PackageStoredEvent;
 import io.swiczka.github.sharedcommon.topics.KafkaTopics;
 import org.slf4j.Logger;
@@ -20,8 +21,14 @@ public class PackageStoredEventConsumer {
     }
 
     @KafkaListener(topics = KafkaTopics.PACKAGE_STORED, groupId = "warehouse-service")
-    public void handlePackageLocationUpdated(final PackageStoredEvent event) {
+    public void handlePackageStored(final PackageStoredEvent event) {
         log.info("Received PackageStoredEvent for packageId={}", event.packageId());
         packageService.markPackageAsStored(event.packageId(), event.x(), event.y());
+    }
+
+    @KafkaListener(topics = KafkaTopics.PACKAGE_DROPPED, groupId = "warehouse-service")
+    public void handlePackageDropped(final PackageDroppedEvent event) {
+        log.info("Received PackageDroppedEvent for packageId={}", event.packageId());
+        packageService.markPackageAsDropped(event.packageId());
     }
 }

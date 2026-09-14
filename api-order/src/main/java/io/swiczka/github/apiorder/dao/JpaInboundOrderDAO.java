@@ -31,4 +31,15 @@ public class JpaInboundOrderDAO implements InboundOrderDAO {
                 .getResultList();
         return orders;
     }
+
+    @Override
+    public List<InboundOrder> getInboundByLayoutAndUser(final Long layoutId, final UUID userId) {
+        final List<InboundOrder> orders = entityManager.createQuery(
+                "FROM InboundOrder io WHERE io.layoutId = :layoutId AND io.operatorId = :userId",
+                InboundOrder.class)
+                .setParameter("layoutId", layoutId)
+                .setParameter("userId", userId)
+                .getResultList();
+        return orders;
+    }
 }

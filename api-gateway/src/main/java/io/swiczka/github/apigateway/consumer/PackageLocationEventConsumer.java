@@ -2,6 +2,7 @@ package io.swiczka.github.apigateway.consumer;
 
 import io.swiczka.github.apigateway.stomp.PackageWebsocketPublisher;
 import io.swiczka.github.sharedcommon.events.PackageAllocatedEvent;
+import io.swiczka.github.sharedcommon.events.PackageDroppedEvent;
 import io.swiczka.github.sharedcommon.events.PackagePickedEvent;
 import io.swiczka.github.sharedcommon.events.PackageStoredEvent;
 import io.swiczka.github.sharedcommon.topics.KafkaTopics;
@@ -36,5 +37,11 @@ public class PackageLocationEventConsumer {
     public void handlePackagePicked(final PackagePickedEvent event) {
         log.info("Received PackagePickedEvent for packageId={}", event.packageId());
         websocketPublisher.publishPicked(event);
+    }
+
+    @KafkaListener(topics = KafkaTopics.PACKAGE_DROPPED, groupId = "gateway-service")
+    public void handlePackageDropped(final PackageDroppedEvent event) {
+        log.info("Received PackageDroppedEvent for packageId={}", event.packageId());
+        websocketPublisher.publishDropped(event);
     }
 }

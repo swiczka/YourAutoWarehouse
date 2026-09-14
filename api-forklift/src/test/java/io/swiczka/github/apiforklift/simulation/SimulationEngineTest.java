@@ -8,6 +8,7 @@ import io.swiczka.github.apiforklift.dto.ForkliftTaskCreateDto;
 import io.swiczka.github.apiforklift.enums.TaskStatus;
 import io.swiczka.github.apiforklift.enums.TaskType;
 import io.swiczka.github.apiforklift.producer.ForkliftLocationEventProducer;
+import io.swiczka.github.apiforklift.producer.PackageDroppedEventProducer;
 import io.swiczka.github.apiforklift.producer.PackagePickedEventProducer;
 import io.swiczka.github.apiforklift.producer.PackageStoredEventProducer;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,6 +38,7 @@ class SimulationEngineTest {
         PackageStoredEventProducer packageStoredEventProducer = mock(PackageStoredEventProducer.class);
         ForkliftLocationEventProducer locationEventProducer = mock(ForkliftLocationEventProducer.class);
         PackagePickedEventProducer packagePickedEventProducer = mock(PackagePickedEventProducer.class);
+        PackageDroppedEventProducer packageDroppedEventProducer = mock(PackageDroppedEventProducer.class);
 
         simulationEngine = new SimulationEngine(
                 forkliftRegistry,
@@ -44,7 +46,8 @@ class SimulationEngineTest {
                 taskRegistry,
                 locationEventProducer,
                 packageStoredEventProducer,
-                packagePickedEventProducer
+                packagePickedEventProducer,
+                packageDroppedEventProducer
         );
     }
 

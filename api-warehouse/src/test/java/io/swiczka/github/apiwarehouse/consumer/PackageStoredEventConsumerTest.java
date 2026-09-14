@@ -31,7 +31,7 @@ class PackageStoredEventConsumerTest {
         final PackageStoredEvent event = new PackageStoredEvent(packageId, layoutId, x, y);
 
         // when
-        consumer.handlePackageLocationUpdated(event);
+        consumer.handlePackageStored(event);
 
         // then
         verify(packageService).markPackageAsStored(packageId, x, y);

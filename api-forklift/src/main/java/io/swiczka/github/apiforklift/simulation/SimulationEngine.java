@@ -8,9 +8,11 @@ import io.swiczka.github.apiforklift.enums.ForkliftStatus;
 import io.swiczka.github.apiforklift.enums.TaskStatus;
 import io.swiczka.github.apiforklift.enums.TaskType;
 import io.swiczka.github.apiforklift.producer.ForkliftLocationEventProducer;
+import io.swiczka.github.apiforklift.producer.PackageDroppedEventProducer;
 import io.swiczka.github.apiforklift.producer.PackagePickedEventProducer;
 import io.swiczka.github.apiforklift.producer.PackageStoredEventProducer;
 import io.swiczka.github.sharedcommon.events.ForkliftLocationEvent;
+import io.swiczka.github.sharedcommon.events.PackageDroppedEvent;
 import io.swiczka.github.sharedcommon.events.PackagePickedEvent;
 import io.swiczka.github.sharedcommon.events.PackageStoredEvent;
 import io.swiczka.github.sharedcommon.helpers.Coordinate;
@@ -35,19 +37,23 @@ public class SimulationEngine {
     private final ForkliftLocationEventProducer locationEventProducer;
     private final PackageStoredEventProducer packageStoredEventProducer;
     private final PackagePickedEventProducer packagePickedEventProducer;
+    private final PackageDroppedEventProducer packageDroppedEventProducer;
 
     @Autowired
     public SimulationEngine(final ForkliftRegistry forkliftRegistry,
                             final LayoutCache layoutCache,
                             final ForkliftTaskRegistry taskRegistry,
                             final ForkliftLocationEventProducer locationEventProducer,
-                            final PackageStoredEventProducer packageStoredEventProducer, PackagePickedEventProducer packagePickedEventProducer) {
+                            final PackageStoredEventProducer packageStoredEventProducer,
+                            final PackagePickedEventProducer packagePickedEventProducer,
+                            final PackageDroppedEventProducer packageDroppedEventProducer) {
         this.forkliftRegistry = forkliftRegistry;
         this.layoutCache = layoutCache;
         this.taskRegistry = taskRegistry;
         this.locationEventProducer = locationEventProducer;
         this.packageStoredEventProducer = packageStoredEventProducer;
         this.packagePickedEventProducer = packagePickedEventProducer;
+        this.packageDroppedEventProducer = packageDroppedEventProducer;
     }
 
     @Scheduled(fixedRate = 500)
@@ -189,6 +195,13 @@ public class SimulationEngine {
         } else if (task.getTaskType() == TaskType.OUTBOUND) {
             log.info("Forklift {} delivered outbound package {} to drop zone ({}, {})",
                     forklift.getId(), task.getPackageId(), task.getTargetX(), task.getTargetY());
+            final PackageDroppedEvent event = new PackageDroppedEvent(
+                    task.getPackageId(),
+                    task.getLayoutId(),
+                    task.getTargetX(),
+                    task.getTargetY()
+            );
+            packageDroppedEventProducer.sendPackageDroppedEvent(event);
         }
 
         forklift.setCurrentPackageId(null);

@@ -31,4 +31,15 @@ public class JpaOutboundOrderDAO implements OutboundOrderDAO{
                 .getResultList();
         return orders;
     }
+
+    @Override
+    public List<OutboundOrder> getOutboundByLayoutAndUser(final Long layoutId, final UUID userId) {
+        final List<OutboundOrder> orders = entityManager.createQuery(
+                        "FROM OutboundOrder io WHERE io.layoutId = :layoutId AND io.operatorId = :userId",
+                        OutboundOrder.class)
+                .setParameter("layoutId", layoutId)
+                .setParameter("userId", userId)
+                .getResultList();
+        return orders;
+    }
 }

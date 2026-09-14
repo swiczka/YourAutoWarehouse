@@ -117,6 +117,7 @@ public class PackageItemService {
             PackageItem pkg = optPkg.get();
 
             pkg.setStatus(PackageStatus.SENDING);
+            pkg.setOutboundOrderId(event.orderId());
 
             packageDAO.save(pkg);
 
@@ -191,5 +192,39 @@ public class PackageItemService {
         pkg.setY(y);
         pkg.setStatus(PackageStatus.STORED);
         packageDAO.save(pkg);
+    }
+
+    public void markPackageAsDropped(Long packageId) {
+        final Optional<PackageItem> packageOpt = packageDAO.findById(packageId);
+        if (packageOpt.isEmpty()) {
+            log.warn("Cannot drop package. Package with ID: {} not found", packageId);
+            return;
+        }
+        final PackageItem pkg = packageOpt.get();
+        pkg.setStatus(PackageStatus.DROPPED);
+        pkg.setX(null);
+        pkg.setY(null);
+
+        packageDAO.save(pkg);
+    }
+
+    public List<PackageItemResponse> getPackagesByOutboundOrderId(Long outboundOrderId, UUID guestId) {
+        final List<PackageItem> packages = packageDAO.findByOutboundOrderId(outboundOrderId);
+        if (packages.isEmpty()) {
+            return List.of();
+        }
+
+        final Long layoutId = packages.getFirst().getLayoutId();
+        final LayoutOwnerDto owner = layoutDAO.findOwnerById(layoutId)
+                .orElseThrow(() -> new LayoutNotFoundException(layoutId));
+
+        final boolean isOwner = owner.userId().equals(guestId);
+        if (!isOwner) {
+            throw new ForbiddenException("Access denied to packages for order with id " + outboundOrderId);
+        }
+
+        return packages.stream()
+                .map(PackageItemMapper::toDto)
+                .toList();
     }
 }

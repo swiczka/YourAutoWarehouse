@@ -237,4 +237,90 @@ class OrderServiceTest {
             assertThat(result).isEmpty();
         }
     }
+
+    @Nested
+    @DisplayName("getInboundByLayout")
+    class GetInboundByLayout {
+
+        @Test
+        @DisplayName("Should return mapped list of InboundOrderResponse for given layoutId and userId")
+        void getInboundByLayout_ok() {
+            // given
+            when(inboundDAO.getInboundByLayoutAndUser(TEST_LAYOUT_ID, TEST_OPERATOR_ID))
+                    .thenReturn(List.of(testInboundOrder));
+
+            // when
+            final List<InboundOrderResponse> result = orderService.getInboundByLayout(TEST_OPERATOR_ID, TEST_LAYOUT_ID);
+
+            // then
+            assertThat(result).isNotNull();
+            assertThat(result).hasSize(1);
+
+            final InboundOrderResponse dto = result.getFirst();
+            assertThat(dto.id()).isEqualTo(TEST_ORDER_ID);
+            assertThat(dto.layoutId()).isEqualTo(TEST_LAYOUT_ID);
+            assertThat(dto.operatorId()).isEqualTo(TEST_OPERATOR_ID);
+            assertThat(dto.companyId()).isEqualTo(TEST_COMPANY_ID);
+            assertThat(dto.status()).isEqualTo(InboundOrderStatus.PENDING);
+            assertThat(dto.createdAt()).isEqualTo(TEST_TIME);
+        }
+
+        @Test
+        @DisplayName("Should return empty list when user has no inbound orders for given layout")
+        void getInboundByLayout_emptyList() {
+            // given
+            when(inboundDAO.getInboundByLayoutAndUser(TEST_LAYOUT_ID, TEST_OPERATOR_ID))
+                    .thenReturn(List.of());
+
+            // when
+            final List<InboundOrderResponse> result = orderService.getInboundByLayout(TEST_OPERATOR_ID, TEST_LAYOUT_ID);
+
+            // then
+            assertThat(result).isNotNull();
+            assertThat(result).isEmpty();
+        }
+    }
+
+    @Nested
+    @DisplayName("getOutboundByLayout")
+    class GetOutboundByLayout {
+
+        @Test
+        @DisplayName("Should return mapped list of OutboundOrderResponse for given layoutId and userId")
+        void getOutboundByLayout_ok() {
+            // given
+            when(outboundDAO.getOutboundByLayoutAndUser(TEST_LAYOUT_ID, TEST_OPERATOR_ID))
+                    .thenReturn(List.of(testOutboundOrder));
+
+            // when
+            final List<OutboundOrderResponse> result = orderService.getOutboundByLayout(TEST_OPERATOR_ID, TEST_LAYOUT_ID);
+
+            // then
+            assertThat(result).isNotNull();
+            assertThat(result).hasSize(1);
+
+            final OutboundOrderResponse dto = result.getFirst();
+            assertThat(dto.id()).isEqualTo(TEST_ORDER_ID);
+            assertThat(dto.layoutId()).isEqualTo(TEST_LAYOUT_ID);
+            assertThat(dto.operatorId()).isEqualTo(TEST_OPERATOR_ID);
+            assertThat(dto.companyId()).isEqualTo(TEST_COMPANY_ID);
+            assertThat(dto.status()).isEqualTo(OutboundOrderStatus.PENDING);
+            assertThat(dto.createdAt()).isEqualTo(TEST_TIME);
+        }
+
+        @Test
+        @DisplayName("Should return empty list when user has no outbound orders for given layout")
+        void getOutboundByLayout_emptyList() {
+            // given
+            when(outboundDAO.getOutboundByLayoutAndUser(TEST_LAYOUT_ID, TEST_OPERATOR_ID))
+                    .thenReturn(List.of());
+
+            // when
+            final List<OutboundOrderResponse> result = orderService.getOutboundByLayout(TEST_OPERATOR_ID, TEST_LAYOUT_ID);
+
+            // then
+            assertThat(result).isNotNull();
+            assertThat(result).isEmpty();
+        }
+    }
 }

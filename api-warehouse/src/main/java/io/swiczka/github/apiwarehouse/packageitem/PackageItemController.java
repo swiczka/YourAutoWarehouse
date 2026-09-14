@@ -32,6 +32,14 @@ public class PackageItemController {
         return packageItemService.getPackagesByInboundOrderId(inboundOrderId, guestId);
     }
 
+    @GetMapping("/outbound/{outboundOrderId}")
+    public List<PackageItemResponse> getPackagesByOutboundOrderId(
+            @PathVariable final Long outboundOrderId,
+            @RequestHeader("X-Guest-Id") final UUID guestId
+    ) {
+        return packageItemService.getPackagesByOutboundOrderId(outboundOrderId, guestId);
+    }
+
     @GetMapping("/layout/{layoutId}")
     public List<PackageItemResponse> getPackagesByLayoutId(
             @PathVariable final Long layoutId,

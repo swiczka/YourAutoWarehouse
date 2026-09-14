@@ -18,6 +18,7 @@ public class ForkliftTaskRegistry {
     private final ConcurrentHashMap<Long, ForkliftTask> taskMap;
     private final AtomicLong idSequence;
 
+
     public ForkliftTaskRegistry() {
         this.taskMap = new ConcurrentHashMap<>();
         this.idSequence = new AtomicLong(1);

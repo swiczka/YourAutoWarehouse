@@ -8,4 +8,5 @@ import java.util.UUID;
 public interface InboundOrderDAO {
     void save(InboundOrder order);
     List<InboundOrder> getInboundByUser(UUID userId);
+    List<InboundOrder> getInboundByLayoutAndUser(Long layoutId, UUID userId);
 }

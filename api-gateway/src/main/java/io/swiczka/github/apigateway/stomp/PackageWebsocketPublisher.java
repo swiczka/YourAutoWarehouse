@@ -1,6 +1,7 @@
 package io.swiczka.github.apigateway.stomp;
 
 import io.swiczka.github.sharedcommon.events.PackageAllocatedEvent;
+import io.swiczka.github.sharedcommon.events.PackageDroppedEvent;
 import io.swiczka.github.sharedcommon.events.PackagePickedEvent;
 import io.swiczka.github.sharedcommon.events.PackageStoredEvent;
 import org.slf4j.Logger;
@@ -34,6 +35,12 @@ public class PackageWebsocketPublisher {
     public void publishPicked(final PackagePickedEvent event) {
         final String destination = "/topic/layout/" + event.layoutId() + "/packages";
         log.debug("Publishing package picked to destination: {}", destination);
+        messagingTemplate.convertAndSend(destination, event);
+    }
+
+    public void publishDropped(final PackageDroppedEvent event) {
+        final String destination = "/topic/layout/" + event.layoutId() + "/packages/dropped";
+        log.debug("Publishing package dropped to destination: {}", destination);
         messagingTemplate.convertAndSend(destination, event);
     }
 }

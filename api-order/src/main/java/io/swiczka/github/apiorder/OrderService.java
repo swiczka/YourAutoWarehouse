@@ -84,4 +84,18 @@ public class OrderService {
                 .map(OutboundOrderMapper::toDto)
                 .toList();
     }
+
+    public List<OutboundOrderResponse> getOutboundByLayout(final UUID userId, final Long layoutId) {
+        final List<OutboundOrder> orders = this.outboundDAO.getOutboundByLayoutAndUser(layoutId, userId);
+        return orders.stream()
+                .map(OutboundOrderMapper::toDto)
+                .toList();
+    }
+
+    public List<InboundOrderResponse> getInboundByLayout(final UUID userId, final Long layoutId) {
+        final List<InboundOrder> orders = this.inboundDAO.getInboundByLayoutAndUser(layoutId, userId);
+        return orders.stream()
+                .map(InboundOrderMapper::toDto)
+                .toList();
+    }
 }

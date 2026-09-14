@@ -29,9 +29,11 @@ public class OrderController {
         return orderService.addInboundOrder(dto, guestId);
     }
 
-    @GetMapping("/inbound")
-    public List<InboundOrderResponse> getInboundByUser(@RequestHeader("X-Guest-Id") final UUID guestId) {
-        return orderService.getInboundByUser(guestId);
+    @GetMapping("/layout/{layoutId}/inbound")
+    public List<InboundOrderResponse> getInboundByLayout(
+            @RequestHeader("X-Guest-Id") final UUID guestId,
+            @PathVariable final Long layoutId) {
+        return orderService.getInboundByLayout(guestId, layoutId);
     }
 
     @PostMapping("/outbound")
@@ -41,8 +43,9 @@ public class OrderController {
         return orderService.addOutboundOrder(dto, guestId);
     }
 
-    @GetMapping("/outbound")
-    public List<OutboundOrderResponse> getOutboundByUser(@RequestHeader("X-Guest-Id") final UUID guestId) {
-        return orderService.getOutboundByUser(guestId);
+    @GetMapping("/layout/{layoutId}/outbound")
+    public List<OutboundOrderResponse> getOutboundByLayout(@RequestHeader("X-Guest-Id") final UUID guestId,
+                                                           @PathVariable final Long layoutId) {
+        return orderService.getOutboundByLayout(guestId, layoutId);
     }
 }

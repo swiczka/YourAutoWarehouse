@@ -211,61 +211,6 @@ class OrderControllerTest {
         }
     }
 
-    @Nested
-    @DisplayName("GET /api/order/inbound")
-    class GetInboundByUser {
-
-        @Test
-        @DisplayName("Should return 200 with list of inbound orders for given userId from header")
-        void getInboundByUser_ok() throws Exception {
-            // given
-            final List<InboundOrderResponse> expectedOrders = List.of(createTestInboundResponse());
-
-            when(orderService.getInboundByUser(TEST_OPERATOR_ID)).thenReturn(expectedOrders);
-
-            // when/then
-            mockMvc.perform(get("/api/order/inbound")
-                            .header("X-Guest-Id", TEST_OPERATOR_ID.toString()))
-                    .andExpect(status().isOk())
-                    .andExpect(jsonPath("$").isArray())
-                    .andExpect(jsonPath("$.length()").value(1))
-                    .andExpect(jsonPath("$[0].id").value(TEST_ORDER_ID))
-                    .andExpect(jsonPath("$[0].operatorId").value(TEST_OPERATOR_ID.toString()))
-                    .andExpect(jsonPath("$[0].companyId").value(TEST_COMPANY_ID))
-                    .andExpect(jsonPath("$[0].status").value("PENDING"));
-        }
-
-        @Test
-        @DisplayName("Should return 200 with empty list when user has no orders")
-        void getInboundByUser_emptyList() throws Exception {
-            // given
-            when(orderService.getInboundByUser(TEST_OPERATOR_ID)).thenReturn(List.of());
-
-            // when/then
-            mockMvc.perform(get("/api/order/inbound")
-                            .header("X-Guest-Id", TEST_OPERATOR_ID.toString()))
-                    .andExpect(status().isOk())
-                    .andExpect(jsonPath("$").isArray())
-                    .andExpect(jsonPath("$.length()").value(0));
-        }
-
-        @Test
-        @DisplayName("Should return 400 when X-Guest-Id header is missing")
-        void getInboundByUser_missingGuestIdHeader() throws Exception {
-            // when/then
-            mockMvc.perform(get("/api/order/inbound"))
-                    .andExpect(status().isBadRequest());
-        }
-
-        @Test
-        @DisplayName("Should return 400 when X-Guest-Id is not a valid UUID")
-        void getInboundByUser_invalidGuestId() throws Exception {
-            // when/then
-            mockMvc.perform(get("/api/order/inbound")
-                            .header("X-Guest-Id", "not-a-uuid"))
-                    .andExpect(status().isBadRequest());
-        }
-    }
 
     @Nested
     @DisplayName("POST /api/order/outbound")
@@ -362,19 +307,66 @@ class OrderControllerTest {
     }
 
     @Nested
-    @DisplayName("GET /api/order/outbound")
-    class GetOutboundByUser {
+    @DisplayName("GET /api/order/layout/{layoutId}/inbound")
+    class GetInboundByLayout {
 
         @Test
-        @DisplayName("Should return 200 with list of outbound orders for given userId from header")
-        void getOutboundByUser_ok() throws Exception {
+        @DisplayName("Should return 200 with list of inbound orders for given layout and user")
+        void getInboundByLayout_ok() throws Exception {
+            // given
+            final List<InboundOrderResponse> expectedOrders = List.of(createTestInboundResponse());
+
+            when(orderService.getInboundByLayout(TEST_OPERATOR_ID, TEST_LAYOUT_ID)).thenReturn(expectedOrders);
+
+            // when/then
+            mockMvc.perform(get("/api/order/layout/" + TEST_LAYOUT_ID + "/inbound")
+                            .header("X-Guest-Id", TEST_OPERATOR_ID.toString()))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$").isArray())
+                    .andExpect(jsonPath("$.length()").value(1))
+                    .andExpect(jsonPath("$[0].id").value(TEST_ORDER_ID))
+                    .andExpect(jsonPath("$[0].operatorId").value(TEST_OPERATOR_ID.toString()))
+                    .andExpect(jsonPath("$[0].companyId").value(TEST_COMPANY_ID))
+                    .andExpect(jsonPath("$[0].status").value("PENDING"));
+        }
+
+        @Test
+        @DisplayName("Should return 200 with empty list when user has no inbound orders for layout")
+        void getInboundByLayout_emptyList() throws Exception {
+            // given
+            when(orderService.getInboundByLayout(TEST_OPERATOR_ID, TEST_LAYOUT_ID)).thenReturn(List.of());
+
+            // when/then
+            mockMvc.perform(get("/api/order/layout/" + TEST_LAYOUT_ID + "/inbound")
+                            .header("X-Guest-Id", TEST_OPERATOR_ID.toString()))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$").isArray())
+                    .andExpect(jsonPath("$.length()").value(0));
+        }
+
+        @Test
+        @DisplayName("Should return 400 when X-Guest-Id header is missing")
+        void getInboundByLayout_missingGuestIdHeader() throws Exception {
+            // when/then
+            mockMvc.perform(get("/api/order/layout/" + TEST_LAYOUT_ID + "/inbound"))
+                    .andExpect(status().isBadRequest());
+        }
+    }
+
+    @Nested
+    @DisplayName("GET /api/order/layout/{layoutId}/outbound")
+    class GetOutboundByLayout {
+
+        @Test
+        @DisplayName("Should return 200 with list of outbound orders for given layout and user")
+        void getOutboundByLayout_ok() throws Exception {
             // given
             final List<OutboundOrderResponse> expectedOrders = List.of(createTestOutboundResponse());
 
-            when(orderService.getOutboundByUser(TEST_OPERATOR_ID)).thenReturn(expectedOrders);
+            when(orderService.getOutboundByLayout(TEST_OPERATOR_ID, TEST_LAYOUT_ID)).thenReturn(expectedOrders);
 
             // when/then
-            mockMvc.perform(get("/api/order/outbound")
+            mockMvc.perform(get("/api/order/layout/" + TEST_LAYOUT_ID + "/outbound")
                             .header("X-Guest-Id", TEST_OPERATOR_ID.toString()))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$").isArray())
@@ -387,13 +379,13 @@ class OrderControllerTest {
         }
 
         @Test
-        @DisplayName("Should return 200 with empty list when user has no outbound orders")
-        void getOutboundByUser_emptyList() throws Exception {
+        @DisplayName("Should return 200 with empty list when user has no outbound orders for layout")
+        void getOutboundByLayout_emptyList() throws Exception {
             // given
-            when(orderService.getOutboundByUser(TEST_OPERATOR_ID)).thenReturn(List.of());
+            when(orderService.getOutboundByLayout(TEST_OPERATOR_ID, TEST_LAYOUT_ID)).thenReturn(List.of());
 
             // when/then
-            mockMvc.perform(get("/api/order/outbound")
+            mockMvc.perform(get("/api/order/layout/" + TEST_LAYOUT_ID + "/outbound")
                             .header("X-Guest-Id", TEST_OPERATOR_ID.toString()))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$").isArray())
@@ -402,9 +394,9 @@ class OrderControllerTest {
 
         @Test
         @DisplayName("Should return 400 when X-Guest-Id header is missing")
-        void getOutboundByUser_missingGuestIdHeader() throws Exception {
+        void getOutboundByLayout_missingGuestIdHeader() throws Exception {
             // when/then
-            mockMvc.perform(get("/api/order/outbound"))
+            mockMvc.perform(get("/api/order/layout/" + TEST_LAYOUT_ID + "/outbound"))
                     .andExpect(status().isBadRequest());
         }
     }
