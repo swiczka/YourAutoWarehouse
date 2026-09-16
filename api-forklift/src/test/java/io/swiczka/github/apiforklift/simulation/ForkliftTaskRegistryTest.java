@@ -3,7 +3,7 @@ package io.swiczka.github.apiforklift.simulation;
 import io.swiczka.github.apiforklift.domain.ForkliftTask;
 import io.swiczka.github.apiforklift.dto.ForkliftTaskCreateDto;
 import io.swiczka.github.apiforklift.enums.TaskStatus;
-import io.swiczka.github.apiforklift.enums.TaskType;
+import io.swiczka.github.sharedcommon.helpers.TaskType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

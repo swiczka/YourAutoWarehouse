@@ -10,18 +10,22 @@ import io.swiczka.github.apiwarehouse.exceptions.LayoutNotFoundException;
 import io.swiczka.github.apiwarehouse.layout.dto.LayoutOwnerDto;
 import io.swiczka.github.apiwarehouse.mapper.PackageItemMapper;
 import io.swiczka.github.apiwarehouse.packageitem.response.PackageItemResponse;
+import io.swiczka.github.apiwarehouse.producers.OrderEventProducer;
 import io.swiczka.github.apiwarehouse.producers.PackageEventProducer;
 import io.swiczka.github.apiwarehouse.strategy.PackagePlacementStrategy;
+import io.swiczka.github.sharedcommon.events.OrderCompleteEvent;
 import io.swiczka.github.sharedcommon.events.OutboundOrderCreatedEvent;
 import io.swiczka.github.sharedcommon.events.PackageAllocatedEvent;
 import io.swiczka.github.sharedcommon.events.PackageShouldBeSentEvent;
 import io.swiczka.github.sharedcommon.helpers.Coordinate;
+import io.swiczka.github.sharedcommon.helpers.TaskType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -37,18 +41,21 @@ public class PackageItemService {
     private final PackagePlacementStrategy packagePlacementStrategy;
     private final LayoutDAO layoutDAO;
     private final PackageEventProducer eventProducer;
+    private final OrderEventProducer orderEventProducer;
 
     @Autowired
     public PackageItemService(
             final PackageItemDAO packageDAO,
             final PackagePlacementStrategy packagePlacementStrategy,
             final LayoutDAO layoutDAO,
-            final PackageEventProducer eventProducer
+            final PackageEventProducer eventProducer,
+            final OrderEventProducer orderEventProducer
     ) {
         this.packageDAO = packageDAO;
         this.packagePlacementStrategy = packagePlacementStrategy;
         this.layoutDAO = layoutDAO;
         this.eventProducer = eventProducer;
+        this.orderEventProducer = orderEventProducer;
     }
 
     public void addNewPackages(
@@ -191,6 +198,21 @@ public class PackageItemService {
         pkg.setX(x);
         pkg.setY(y);
         pkg.setStatus(PackageStatus.STORED);
+
+        final List<PackageItem> orderPackages = packageDAO.findByInboundOrderId(pkg.getInboundOrderId());
+        final boolean orderComplete = !orderPackages.isEmpty() && orderPackages
+                .stream()
+                .allMatch(packageItem -> packageItem.getStatus() == PackageStatus.STORED);
+
+        if(orderComplete){
+            final OrderCompleteEvent event = new OrderCompleteEvent(
+                    pkg.getInboundOrderId(),
+                    TaskType.INBOUND,
+                    Instant.now()
+            );
+            orderEventProducer.sendOrderComplete(event);
+        }
+
         packageDAO.save(pkg);
     }
 
@@ -204,6 +226,20 @@ public class PackageItemService {
         pkg.setStatus(PackageStatus.DROPPED);
         pkg.setX(null);
         pkg.setY(null);
+
+        final List<PackageItem> orderPackages = packageDAO.findByOutboundOrderId(pkg.getOutboundOrderId());
+        final boolean orderComplete = !orderPackages.isEmpty() && orderPackages
+                .stream()
+                .allMatch(packageItem -> packageItem.getStatus() == PackageStatus.DROPPED);
+
+        if(orderComplete){
+            final OrderCompleteEvent event = new OrderCompleteEvent(
+                    pkg.getOutboundOrderId(),
+                    TaskType.OUTBOUND,
+                    Instant.now()
+            );
+            orderEventProducer.sendOrderComplete(event);
+        }
 
         packageDAO.save(pkg);
     }

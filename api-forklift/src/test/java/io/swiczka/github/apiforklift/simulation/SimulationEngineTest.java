@@ -6,7 +6,7 @@ import io.swiczka.github.apiforklift.domain.ForkliftTask;
 import io.swiczka.github.apiforklift.domain.SimulationLayout;
 import io.swiczka.github.apiforklift.dto.ForkliftTaskCreateDto;
 import io.swiczka.github.apiforklift.enums.TaskStatus;
-import io.swiczka.github.apiforklift.enums.TaskType;
+import io.swiczka.github.sharedcommon.helpers.TaskType;
 import io.swiczka.github.apiforklift.producer.ForkliftLocationEventProducer;
 import io.swiczka.github.apiforklift.producer.PackageDroppedEventProducer;
 import io.swiczka.github.apiforklift.producer.PackagePickedEventProducer;

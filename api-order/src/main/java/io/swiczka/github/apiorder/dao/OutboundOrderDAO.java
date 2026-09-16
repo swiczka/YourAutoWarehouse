@@ -3,10 +3,12 @@ package io.swiczka.github.apiorder.dao;
 import io.swiczka.github.apiorder.entity.OutboundOrder;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface OutboundOrderDAO {
     void save(OutboundOrder order);
     List<OutboundOrder> getOutboundByUser(UUID userId);
     List<OutboundOrder> getOutboundByLayoutAndUser(Long layoutId, UUID userId);
+    Optional<OutboundOrder> getOutboundById(Long id);
 }

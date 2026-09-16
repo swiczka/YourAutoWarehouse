@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
@@ -20,7 +21,11 @@ public class JpaOutboundOrderDAO implements OutboundOrderDAO{
 
     @Override
     public void save(OutboundOrder order) {
-        entityManager.persist(order);
+        if(order.getId() == null){
+            entityManager.persist(order);
+            return;
+        }
+        entityManager.merge(order);
     }
 
     @Override
@@ -41,5 +46,10 @@ public class JpaOutboundOrderDAO implements OutboundOrderDAO{
                 .setParameter("userId", userId)
                 .getResultList();
         return orders;
+    }
+
+    @Override
+    public Optional<OutboundOrder> getOutboundById(Long id) {
+        return Optional.ofNullable(entityManager.find(OutboundOrder.class, id));
     }
 }

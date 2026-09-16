@@ -1,4 +1,4 @@
-package io.swiczka.github.apiforklift.enums;
+package io.swiczka.github.sharedcommon.helpers;
 
 public enum TaskType {
     INBOUND,

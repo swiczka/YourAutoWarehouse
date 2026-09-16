@@ -10,6 +10,8 @@ public final class KafkaTopics {
     public static final String PACKAGE_STORED = "forklift.package-stored";
     public static final String PACKAGE_PICKED = "forklift.package-picked";
     public static final String PACKAGE_DROPPED = "forklift.package-dropped";
+    public static final String ORDER_COMPLETE = "warehouse.order-complete";
+
 
     private KafkaTopics(){}
 }

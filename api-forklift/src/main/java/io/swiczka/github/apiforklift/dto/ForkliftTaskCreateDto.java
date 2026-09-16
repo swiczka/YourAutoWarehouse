@@ -1,6 +1,6 @@
 package io.swiczka.github.apiforklift.dto;
 
-import io.swiczka.github.apiforklift.enums.TaskType;
+import io.swiczka.github.sharedcommon.helpers.TaskType;
 
 public record ForkliftTaskCreateDto(
         Long packageItemId,

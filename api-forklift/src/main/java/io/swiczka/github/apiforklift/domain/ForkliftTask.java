@@ -1,7 +1,7 @@
 package io.swiczka.github.apiforklift.domain;
 
 import io.swiczka.github.apiforklift.enums.TaskStatus;
-import io.swiczka.github.apiforklift.enums.TaskType;
+import io.swiczka.github.sharedcommon.helpers.TaskType;
 
 public class ForkliftTask {
     private final Long taskId;

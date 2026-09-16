@@ -13,12 +13,14 @@ import io.swiczka.github.apiorder.mapper.OutboundOrderMapper;
 import io.swiczka.github.apiorder.producer.OrderEventProducer;
 import io.swiczka.github.apiorder.response.InboundOrderResponse;
 import io.swiczka.github.apiorder.response.OutboundOrderResponse;
+import io.swiczka.github.sharedcommon.helpers.TaskType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -97,5 +99,22 @@ public class OrderService {
         return orders.stream()
                 .map(InboundOrderMapper::toDto)
                 .toList();
+    }
+
+    public void handleOrderComplete(final Long orderId, final TaskType taskType){
+        if(taskType == TaskType.INBOUND){
+            Optional<InboundOrder> orderOpt = inboundDAO.getInboundById(orderId);
+            if(orderOpt.isEmpty()) return;
+            InboundOrder order = orderOpt.get();
+            order.setStatus(InboundOrderStatus.COMPLETED);
+            inboundDAO.save(order);
+        }
+        else if(taskType == TaskType.OUTBOUND){
+            Optional<OutboundOrder> orderOpt = outboundDAO.getOutboundById(orderId);
+            if(orderOpt.isEmpty()) return;
+            OutboundOrder order = orderOpt.get();
+            order.setStatus(OutboundOrderStatus.COMPLETED);
+            outboundDAO.save(order);
+        }
     }
 }

@@ -1,7 +1,7 @@
 package io.swiczka.github.apiforklift.consumer;
 
 import io.swiczka.github.apiforklift.dto.ForkliftTaskCreateDto;
-import io.swiczka.github.apiforklift.enums.TaskType;
+import io.swiczka.github.sharedcommon.helpers.TaskType;
 import io.swiczka.github.apiforklift.simulation.ForkliftTaskRegistry;
 import io.swiczka.github.apiforklift.simulation.LayoutCache;
 import io.swiczka.github.sharedcommon.events.PackageAllocatedEvent;

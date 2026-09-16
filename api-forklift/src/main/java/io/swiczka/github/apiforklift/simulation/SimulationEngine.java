@@ -6,7 +6,7 @@ import io.swiczka.github.apiforklift.domain.SimulationLayout;
 import io.swiczka.github.apiforklift.dto.ForkliftCreateDto;
 import io.swiczka.github.apiforklift.enums.ForkliftStatus;
 import io.swiczka.github.apiforklift.enums.TaskStatus;
-import io.swiczka.github.apiforklift.enums.TaskType;
+import io.swiczka.github.sharedcommon.helpers.TaskType;
 import io.swiczka.github.apiforklift.producer.ForkliftLocationEventProducer;
 import io.swiczka.github.apiforklift.producer.PackageDroppedEventProducer;
 import io.swiczka.github.apiforklift.producer.PackagePickedEventProducer;
@@ -172,7 +172,8 @@ public class SimulationEngine {
             PackagePickedEvent event = new PackagePickedEvent(
                     task.getPackageId(),
                     task.getAssignedForkliftId(),
-                    task.getLayoutId()
+                    task.getLayoutId(),
+                    task.getTaskType()
             );
 
             packagePickedEventProducer.sendPackagePickedEvent(event);
