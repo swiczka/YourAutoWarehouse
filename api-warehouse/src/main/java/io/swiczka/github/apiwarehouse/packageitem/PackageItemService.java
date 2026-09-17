@@ -7,7 +7,7 @@ import io.swiczka.github.apiwarehouse.entity.PackageItem;
 import io.swiczka.github.apiwarehouse.enums.PackageStatus;
 import io.swiczka.github.apiwarehouse.exceptions.ForbiddenException;
 import io.swiczka.github.apiwarehouse.exceptions.LayoutNotFoundException;
-import io.swiczka.github.apiwarehouse.layout.dto.LayoutOwnerDto;
+import io.swiczka.github.sharedcommon.dto.LayoutOwnerDto;
 import io.swiczka.github.apiwarehouse.mapper.PackageItemMapper;
 import io.swiczka.github.apiwarehouse.packageitem.response.PackageItemResponse;
 import io.swiczka.github.apiwarehouse.producers.OrderEventProducer;

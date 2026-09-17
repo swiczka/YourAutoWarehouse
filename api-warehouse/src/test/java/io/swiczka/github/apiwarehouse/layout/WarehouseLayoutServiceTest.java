@@ -3,6 +3,7 @@ package io.swiczka.github.apiwarehouse.layout;
 import io.swiczka.github.apiwarehouse.dao.LayoutDAO;
 import io.swiczka.github.apiwarehouse.domain.GridData;
 import io.swiczka.github.apiwarehouse.entity.Layout;
+import io.swiczka.github.apiwarehouse.exceptions.ForbiddenException;
 import io.swiczka.github.apiwarehouse.exceptions.LayoutNotFoundException;
 import io.swiczka.github.apiwarehouse.layout.dto.GridDataDto;
 import io.swiczka.github.apiwarehouse.layout.response.LayoutReadResponse;
@@ -173,6 +174,52 @@ class WarehouseLayoutServiceTest {
                     .isInstanceOf(LayoutNotFoundException.class)
                     .hasMessageContaining(TEST_LAYOUT_ID.toString());
 
+        }
+    }
+
+    @Nested
+    @DisplayName("getLayoutById")
+    class GetLayoutById {
+
+        @Test
+        @DisplayName("Should return layout when layout exists and user is the owner")
+        void getLayoutById_ok() {
+            // given
+            when(layoutDAO.findById(TEST_LAYOUT_ID)).thenReturn(Optional.of(testLayout));
+
+            // when
+            final LayoutReadResponse response = layoutService.getLayoutById(TEST_LAYOUT_ID, TEST_USER_ID);
+
+            // then
+            assertThat(response).isNotNull();
+            assertThat(response.id()).isEqualTo(TEST_LAYOUT_ID);
+            assertThat(response.userId()).isEqualTo(TEST_USER_ID);
+            assertThat(response.forkliftNumber()).isEqualTo(5);
+        }
+
+        @Test
+        @DisplayName("Should throw ForbiddenException when user is not the owner")
+        void getLayoutById_forbidden() {
+            // given
+            final UUID otherUserId = UUID.fromString("660e8400-e29b-41d4-a716-446655440001");
+            when(layoutDAO.findById(TEST_LAYOUT_ID)).thenReturn(Optional.of(testLayout));
+
+            // when / then
+            assertThatThrownBy(() -> layoutService.getLayoutById(TEST_LAYOUT_ID, otherUserId))
+                    .isInstanceOf(ForbiddenException.class)
+                    .hasMessageContaining(TEST_LAYOUT_ID.toString());
+        }
+
+        @Test
+        @DisplayName("Should throw LayoutNotFoundException when layout does not exist")
+        void getLayoutById_notFound() {
+            // given
+            when(layoutDAO.findById(TEST_LAYOUT_ID)).thenReturn(Optional.empty());
+
+            // when / then
+            assertThatThrownBy(() -> layoutService.getLayoutById(TEST_LAYOUT_ID, TEST_USER_ID))
+                    .isInstanceOf(LayoutNotFoundException.class)
+                    .hasMessageContaining(TEST_LAYOUT_ID.toString());
         }
     }
 }

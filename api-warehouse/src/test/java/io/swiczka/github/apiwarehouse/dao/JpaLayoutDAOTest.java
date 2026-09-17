@@ -1,6 +1,6 @@
 package io.swiczka.github.apiwarehouse.dao;
 
-import io.swiczka.github.apiwarehouse.layout.dto.LayoutOwnerDto;
+import io.swiczka.github.sharedcommon.dto.LayoutOwnerDto;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import org.junit.jupiter.api.DisplayName;

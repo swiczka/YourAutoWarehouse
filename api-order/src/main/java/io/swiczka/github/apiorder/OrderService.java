@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+@Transactional
 @Service
 public class OrderService {
 
@@ -37,7 +38,6 @@ public class OrderService {
         this.orderEventProducer = orderEventProducer;
     }
 
-    @Transactional
     public InboundOrderResponse addInboundOrder(final InboundOrderCreateDto dto, final UUID guestId) {
         final InboundOrder newOrder = new InboundOrder(
                 dto.layoutId(),
@@ -62,7 +62,7 @@ public class OrderService {
                 .toList();
     }
 
-    @Transactional
+
     public OutboundOrderResponse addOutboundOrder(final OutboundOrderCreateDto dto, final UUID guestId) {
         final OutboundOrder newOrder = new OutboundOrder(
                 dto.layoutId(),

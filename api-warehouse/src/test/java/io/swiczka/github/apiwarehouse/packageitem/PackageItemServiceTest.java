@@ -28,7 +28,7 @@ import static org.mockito.Mockito.when;
 
 import io.swiczka.github.apiwarehouse.exceptions.ForbiddenException;
 import io.swiczka.github.apiwarehouse.exceptions.LayoutNotFoundException;
-import io.swiczka.github.apiwarehouse.layout.dto.LayoutOwnerDto;
+import io.swiczka.github.sharedcommon.dto.LayoutOwnerDto;
 import io.swiczka.github.apiwarehouse.packageitem.response.PackageItemResponse;
 import org.junit.jupiter.api.Nested;
 

@@ -1,5 +1,6 @@
 package io.swiczka.github.apiwarehouse.layout;
 
+import io.swiczka.github.apiwarehouse.exceptions.ForbiddenException;
 import io.swiczka.github.apiwarehouse.exceptions.LayoutNotFoundException;
 import io.swiczka.github.apiwarehouse.layout.dto.GridDataDto;
 import io.swiczka.github.sharedcommon.helpers.Direction;
@@ -125,7 +126,7 @@ class WarehouseLayoutControllerTest {
             when(layoutService.getLatestUserLayout(TEST_USER_ID)).thenReturn(expectedResponse);
 
             //then
-            mockMvc.perform(get("/api/warehouse/layout")
+            mockMvc.perform(get("/api/warehouse/layout/latest")
                             .header("X-Guest-Id", TEST_USER_ID.toString()))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.userId").value(TEST_USER_ID.toString()));
@@ -141,7 +142,7 @@ class WarehouseLayoutControllerTest {
             when(layoutService.getLatestUserLayout(TEST_USER_ID)).thenThrow(LayoutNotFoundException.class);
 
             //then
-            mockMvc.perform(get("/api/warehouse/layout")
+            mockMvc.perform(get("/api/warehouse/layout/latest")
                             .header("X-Guest-Id", TEST_USER_ID.toString()))
                     .andExpect(status().isNotFound());
         }
@@ -152,7 +153,7 @@ class WarehouseLayoutControllerTest {
             // given
 
             //when then
-            mockMvc.perform(get("/api/warehouse/layout"))
+            mockMvc.perform(get("/api/warehouse/layout/latest"))
                     .andExpect(status().isBadRequest());
         }
     }
@@ -172,7 +173,7 @@ class WarehouseLayoutControllerTest {
                     .thenReturn(expectedResponse);
 
             //then
-            mockMvc.perform(patch("/api/warehouse/1/forklift")
+            mockMvc.perform(patch("/api/warehouse/layout/1/forklift")
                             .param("forkliftNumber", newForklift.toString()))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.id").value(expectedResponse.id()))
@@ -186,7 +187,7 @@ class WarehouseLayoutControllerTest {
             //given
 
             //when then
-            mockMvc.perform(patch("/api/warehouse/1/forklift")
+            mockMvc.perform(patch("/api/warehouse/layout/1/forklift")
                             .param("forkliftNumber", String.valueOf(badValue)))
                     .andExpect(status().isBadRequest());
         }
@@ -201,10 +202,64 @@ class WarehouseLayoutControllerTest {
                     .thenThrow(LayoutNotFoundException.class);
 
             //then
-            mockMvc.perform(patch("/api/warehouse/1/forklift")
+            mockMvc.perform(patch("/api/warehouse/layout/1/forklift")
                             .param("forkliftNumber", "5"))
                     .andExpect(status().isNotFound());
         }
 
+    }
+
+    @Nested
+    @DisplayName("GET /api/warehouse/layout/{id}")
+    class GetLayoutById {
+
+        @Test
+        @DisplayName("Should return 200 and layout response when user is owner")
+        void getLayoutById_ok() throws Exception {
+            // given
+            final LayoutReadResponse expectedResponse = createTestResponse();
+            when(layoutService.getLayoutById(1L, TEST_USER_ID)).thenReturn(expectedResponse);
+
+            // when / then
+            mockMvc.perform(get("/api/warehouse/layout/1")
+                            .header("X-Guest-Id", TEST_USER_ID.toString()))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.id").value(1))
+                    .andExpect(jsonPath("$.userId").value(TEST_USER_ID.toString()));
+        }
+
+        @Test
+        @DisplayName("Should return 403 when user is not owner")
+        void getLayoutById_forbidden() throws Exception {
+            // given
+            when(layoutService.getLayoutById(1L, TEST_USER_ID))
+                    .thenThrow(new ForbiddenException("Access denied to layout with id 1"));
+
+            // when / then
+            mockMvc.perform(get("/api/warehouse/layout/1")
+                            .header("X-Guest-Id", TEST_USER_ID.toString()))
+                    .andExpect(status().isForbidden());
+        }
+
+        @Test
+        @DisplayName("Should return 404 when layout does not exist")
+        void getLayoutById_notFound() throws Exception {
+            // given
+            when(layoutService.getLayoutById(1L, TEST_USER_ID))
+                    .thenThrow(new LayoutNotFoundException(1L));
+
+            // when / then
+            mockMvc.perform(get("/api/warehouse/layout/1")
+                            .header("X-Guest-Id", TEST_USER_ID.toString()))
+                    .andExpect(status().isNotFound());
+        }
+
+        @Test
+        @DisplayName("Should return 400 when X-Guest-Id header is missing")
+        void getLayoutById_missingHeader() throws Exception {
+            // when / then
+            mockMvc.perform(get("/api/warehouse/layout/1"))
+                    .andExpect(status().isBadRequest());
+        }
     }
 }

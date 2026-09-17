@@ -1,6 +1,10 @@
 server:
   port: 8080
 
+warehouse:
+  api:
+    base-url: http://${WAREHOUSE_HOST:localhost}:8082
+
 spring:
   application:
     name: api-gateway

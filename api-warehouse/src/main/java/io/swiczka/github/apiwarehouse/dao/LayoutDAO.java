@@ -1,8 +1,10 @@
 package io.swiczka.github.apiwarehouse.dao;
 
 import io.swiczka.github.apiwarehouse.entity.Layout;
-import io.swiczka.github.apiwarehouse.layout.dto.LayoutOwnerDto;
+import io.swiczka.github.apiwarehouse.layout.response.LayoutIdReadResponse;
+import io.swiczka.github.sharedcommon.dto.LayoutOwnerDto;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -11,4 +13,5 @@ public interface LayoutDAO {
     Optional<Layout> findById(final Long id);
     Optional<LayoutOwnerDto> findOwnerById(final Long id);
     Optional<Layout> findLatestByUserId(final UUID userId);
+    List<LayoutIdReadResponse> findUserLayoutIds(final UUID userId);
 }

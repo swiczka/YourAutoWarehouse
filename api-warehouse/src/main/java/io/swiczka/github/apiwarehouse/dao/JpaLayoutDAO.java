@@ -1,7 +1,8 @@
 package io.swiczka.github.apiwarehouse.dao;
 
 import io.swiczka.github.apiwarehouse.entity.Layout;
-import io.swiczka.github.apiwarehouse.layout.dto.LayoutOwnerDto;
+import io.swiczka.github.apiwarehouse.layout.response.LayoutIdReadResponse;
+import io.swiczka.github.sharedcommon.dto.LayoutOwnerDto;
 import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -37,7 +38,7 @@ public class JpaLayoutDAO implements LayoutDAO {
     @Override
     public Optional<LayoutOwnerDto> findOwnerById(final Long id) {
         final List<LayoutOwnerDto> results = entityManager.createQuery(
-                "SELECT new io.swiczka.github.apiwarehouse.layout.dto.LayoutOwnerDto(l.id, l.userId) " +
+                "SELECT new io.swiczka.github.sharedcommon.dto.LayoutOwnerDto(l.id, l.userId) " +
                         "FROM Layout l WHERE l.id = :id", LayoutOwnerDto.class)
                 .setParameter("id", id)
                 .setMaxResults(1)
@@ -60,5 +61,15 @@ public class JpaLayoutDAO implements LayoutDAO {
             return Optional.empty();
         }
         return Optional.of(layouts.getFirst());
+    }
+
+    @Override
+    public List<LayoutIdReadResponse> findUserLayoutIds(UUID userId) {
+        final List<LayoutIdReadResponse> results = entityManager.createQuery(
+                        "SELECT new io.swiczka.github.apiwarehouse.layout.response.LayoutIdReadResponse(l.id, l.createdAt) " +
+                                "FROM Layout l WHERE l.userId = :userId", LayoutIdReadResponse.class)
+                .setParameter("userId", userId)
+                .getResultList();
+        return results;
     }
 }
