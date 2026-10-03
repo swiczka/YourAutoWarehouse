@@ -18,7 +18,6 @@ public class ForkliftTaskRegistry {
     private final ConcurrentHashMap<Long, ForkliftTask> taskMap;
     private final AtomicLong idSequence;
 
-
     public ForkliftTaskRegistry() {
         this.taskMap = new ConcurrentHashMap<>();
         this.idSequence = new AtomicLong(1);
@@ -64,6 +63,23 @@ public class ForkliftTaskRegistry {
         return this.taskMap.values().stream()
                 .filter(task -> layoutId.equals(task.getLayoutId()))
                 .toList();
+    }
+
+    public boolean hasActiveTasks(final Long layoutId) {
+        if (layoutId == null) {
+            return false;
+        }
+        return this.taskMap.values().stream()
+                .filter(task -> layoutId.equals(task.getLayoutId()))
+                .anyMatch(task -> task.getStatus() == TaskStatus.PENDING
+                        || task.getStatus() == TaskStatus.IN_PROGRESS);
+    }
+
+    public void removeByLayoutId(final Long layoutId) {
+        if (layoutId == null) {
+            return;
+        }
+        this.taskMap.entrySet().removeIf(entry -> layoutId.equals(entry.getValue().getLayoutId()));
     }
 
     public Optional<ForkliftTask> getById(final Long id) {

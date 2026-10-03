@@ -26,6 +26,9 @@ class PackageEventConsumerTest {
     @Mock
     private LayoutCache layoutCache;
 
+    @Mock
+    private io.swiczka.github.apiforklift.client.WarehouseLayoutClient warehouseLayoutClient;
+
     @InjectMocks
     private PackageEventConsumer packageEventConsumer;
 

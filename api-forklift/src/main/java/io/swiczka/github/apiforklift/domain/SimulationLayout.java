@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swiczka.github.sharedcommon.helpers.Coordinate;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +20,8 @@ public class SimulationLayout {
     private final Integer forkliftNumber;
     private final List<SimulationGridData> simulationGridData;
     private final Map<Coordinate, SimulationGridData> cellIndex;
+    private volatile Instant lastActivityAt;
+    private volatile boolean markedToRemove;
 
     @JsonCreator
     public SimulationLayout(
@@ -37,6 +41,8 @@ public class SimulationLayout {
                         Function.identity(),
                         (existing, replacement) -> existing
                 ));
+        this.lastActivityAt = Instant.now();
+        this.markedToRemove = false;
     }
 
     public Long getId() {
@@ -80,5 +86,28 @@ public class SimulationLayout {
                 .mapToInt(cell -> cell.coordinates().y())
                 .max()
                 .orElse(0);
+    }
+
+    public Instant getLastActivityAt() {
+        return lastActivityAt;
+    }
+
+    public void touch() {
+        this.lastActivityAt = Instant.now();
+    }
+
+    public boolean isInactiveFor(final Duration duration) {
+        if (duration == null) {
+            return false;
+        }
+        return Duration.between(this.lastActivityAt, Instant.now()).compareTo(duration) >= 0;
+    }
+
+    public void markForRemoval() {
+        this.markedToRemove = true;
+    }
+
+    public boolean isMarkedToRemove() {
+        return markedToRemove;
     }
 }

@@ -15,10 +15,7 @@ import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.messaging.support.MessageHeaderAccessor;
 import org.springframework.stereotype.Component;
 
-import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -30,15 +27,6 @@ public class WebSocketAuthInterceptor implements ChannelInterceptor {
     // matches /topic/layout/{layoutId}/... where layoutId is a number
     private static final Pattern LAYOUT_DESTINATION_PATTERN = Pattern.compile("^/topic/layout/(\\d+)/.*$");
     private static final String GUEST_ID_HEADER = "X-Guest-Id";
-
-    // layoutId -> set of active subscription keys ("sessionId:subscriptionId")
-    private final Map<Long, Set<String>> layoutSubscribers = new ConcurrentHashMap<>();
-
-    // subscriptionKey -> layoutId
-    private final Map<String, Long> subscriptionLayouts = new ConcurrentHashMap<>();
-
-    // sessionId -> set of subscriptionKeys belonging to this session
-    private final Map<String, Set<String>> sessionSubscriptions = new ConcurrentHashMap<>();
 
     private final WarehouseApiClient warehouseApiClient;
 
@@ -63,16 +51,6 @@ public class WebSocketAuthInterceptor implements ChannelInterceptor {
 
         if (StompCommand.SUBSCRIBE.equals(accessor.getCommand())) {
             handleSubscribe(accessor);
-            return message;
-        }
-
-        if (StompCommand.UNSUBSCRIBE.equals(accessor.getCommand())) {
-            handleUnsubscribe(accessor);
-            return message;
-        }
-
-        if (StompCommand.DISCONNECT.equals(accessor.getCommand())) {
-            handleDisconnect(accessor);
             return message;
         }
 
@@ -118,93 +96,7 @@ public class WebSocketAuthInterceptor implements ChannelInterceptor {
             throw new MessageDeliveryException("Access denied to layout " + layoutId);
         }
 
-        final String sessionId = accessor.getSessionId();
-        final String subscriptionId = accessor.getSubscriptionId();
-        if (sessionId == null || subscriptionId == null) {
-            return;
-        }
-
-        final String subKey = buildSubscriptionKey(sessionId, subscriptionId);
-        subscriptionLayouts.put(subKey, layoutId);
-
-        sessionSubscriptions.computeIfAbsent(sessionId, ignored -> ConcurrentHashMap.newKeySet())
-                .add(subKey);
-
-        final Set<String> subscribers = layoutSubscribers.computeIfAbsent(
-                layoutId, ignored -> ConcurrentHashMap.newKeySet()
-        );
-
-        final boolean isFirstSubscriber = subscribers.isEmpty();
-        subscribers.add(subKey);
-
-        if (isFirstSubscriber) {
-            log.info("First subscriber for layoutId={}. Ready to notify forklift service to load layout.", layoutId);
-            // TODO: In future, notify forklift service to load layout (e.g. via Kafka producer)
-        }
-
-        log.debug("SUBSCRIBE accepted: guestId={}, layoutId={}, subKey={}", guestId, layoutId, subKey);
-    }
-
-    private void handleUnsubscribe(final StompHeaderAccessor accessor) {
-        final String sessionId = accessor.getSessionId();
-        final String subscriptionId = accessor.getSubscriptionId();
-        if (sessionId == null || subscriptionId == null) {
-            return;
-        }
-
-        final String subKey = buildSubscriptionKey(sessionId, subscriptionId);
-        removeSubscription(sessionId, subKey);
-    }
-
-    private void handleDisconnect(final StompHeaderAccessor accessor) {
-        final String sessionId = accessor.getSessionId();
-        if (sessionId == null) {
-            return;
-        }
-
-        final Set<String> subKeys = sessionSubscriptions.remove(sessionId);
-        if (subKeys == null || subKeys.isEmpty()) {
-            return;
-        }
-
-        for (final String subKey : subKeys) {
-            removeSubscriptionFromLayout(subKey);
-        }
-    }
-
-    private void removeSubscription(final String sessionId, final String subKey) {
-        final Set<String> sessionSubs = sessionSubscriptions.get(sessionId);
-        if (sessionSubs != null) {
-            sessionSubs.remove(subKey);
-            if (sessionSubs.isEmpty()) {
-                sessionSubscriptions.remove(sessionId);
-            }
-        }
-
-        removeSubscriptionFromLayout(subKey);
-    }
-
-    private void removeSubscriptionFromLayout(final String subKey) {
-        final Long layoutId = subscriptionLayouts.remove(subKey);
-        if (layoutId == null) {
-            return;
-        }
-
-        final Set<String> subscribers = layoutSubscribers.get(layoutId);
-        if (subscribers == null) {
-            return;
-        }
-
-        subscribers.remove(subKey);
-        if (subscribers.isEmpty()) {
-            layoutSubscribers.remove(layoutId);
-            log.info("No more subscribers for layoutId={}. Ready to notify forklift service to unload layout.", layoutId);
-            // TODO: In future, notify forklift service to unload layout after tasks complete
-        }
-    }
-
-    private String buildSubscriptionKey(final String sessionId, final String subscriptionId) {
-        return sessionId + ":" + subscriptionId;
+        log.debug("SUBSCRIBE accepted: guestId={}, layoutId={}", guestId, layoutId);
     }
 
     private Long parseLayoutId(final String destination) {

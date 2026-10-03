@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>STOMP WebSocket Tester</title>
+    <script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@7.0.0/bundles/stomp.umd.min.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 25px; background: #18181b; color: #f4f4f5; }
+        .container { max-width: 750px; margin: 0 auto; background: #27272a; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+        h2 { margin-top: 0; color: #38bdf8; }
+        label { display: block; margin-top: 10px; font-weight: bold; font-size: 13px; color: #a1a1aa; }
+        input { width: 100%; box-sizing: border-box; padding: 10px; margin-top: 4px; border-radius: 6px; background: #18181b; color: #fff; border: 1px solid #3f3f46; font-family: monospace; }
+        button { padding: 10px 16px; margin-top: 12px; border-radius: 6px; font-weight: bold; cursor: pointer; border: none; transition: 0.2s; }
+        .btn-connect { background: #0284c7; color: #fff; }
+        .btn-connect:hover { background: #0369a1; }
+        .btn-disconnect { background: #ef4444; color: #fff; }
+        .btn-disconnect:hover { background: #dc2626; }
+        .btn-sub { background: #10b981; color: #fff; }
+        .btn-sub:hover { background: #059669; }
+        .btn-sub:disabled { background: #52525b; cursor: not-allowed; opacity: 0.6; }
+        #logs { background: #09090b; padding: 15px; border-radius: 6px; border: 1px solid #27272a; height: 320px; overflow-y: auto; margin-top: 20px; font-family: monospace; font-size: 13px; }
+        .log-in { color: #4ade80; margin-bottom: 4px; }
+        .log-out { color: #38bdf8; margin-bottom: 4px; }
+        .log-err { color: #f87171; margin-bottom: 4px; }
+        .log-info { color: #a1a1aa; margin-bottom: 4px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>AutoWarehouse STOMP Tester</h2>
+        
+        <label>Gateway WebSocket URL:</label>
+        <input id="url" value="ws://localhost:8080/ws">
+
+        <label>X-Guest-Id (UUID użytkownika):</label>
+        <input id="guestId" value="2834e533-c10e-4dd0-a78a-3bbe6620279f">
+
+        <button id="btnConnect" class="btn-connect" onclick="toggleConnect()">Połącz (CONNECT)</button>
+
+        <hr style="border: none; border-top: 1px solid #3f3f46; margin: 20px 0;">
+
+        <label>Destination (np. /topic/layout/{id}/packages):</label>
+        <input id="destination" value="/topic/layout/35/packages">
+
+        <button id="btnSubscribe" class="btn-sub" onclick="subscribe()" disabled>Subskrybuj (SUBSCRIBE)</button>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px;">
+            <label style="margin: 0;">Logi zdarzeń:</label>
+            <button onclick="document.getElementById('logs').innerHTML = ''" style="padding: 4px 8px; font-size: 11px; background: #3f3f46; color: #fff;">Wyczyść logi</button>
+        </div>
+        <div id="logs"></div>
+    </div>
+
+    <script>
+        let client = null;
+        let subscription = null;
+
+        function log(msg, cls = 'log-info') {
+            const logs = document.getElementById('logs');
+            const div = document.createElement('div');
+            div.className = cls;
+            div.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
+            logs.appendChild(div);
+            logs.scrollTop = logs.scrollHeight;
+        }
+
+        function toggleConnect() {
+            if (client && client.connected) {
+                client.deactivate();
+                log('Rozłączono.', 'log-info');
+                updateUiDisconnected();
+                return;
+            }
+
+            const url = document.getElementById('url').value;
+            const guestId = document.getElementById('guestId').value;
+
+            client = new StompJs.Client({
+                brokerURL: url,
+                connectHeaders: {
+                    'X-Guest-Id': guestId
+                },
+                onConnect: function (frame) {
+                    log('SUKCES: Połączono i uwierzytelniono ze STOMP! [CONNECTED]', 'log-in');
+                    updateUiConnected();
+                },
+                onStompError: function (frame) {
+                    log('BŁĄD STOMP (odrzucono przez serwer): ' + (frame.headers['message'] || 'Błąd autoryzacji'), 'log-err');
+                    if (frame.body) {
+                        log('Szczegóły błędu: ' + frame.body, 'log-err');
+                    }
+                },
+                onWebSocketClose: function () {
+                    log('Połączenie WebSocket zostało zamknięte.', 'log-err');
+                    updateUiDisconnected();
+                }
+            });
+
+            log('Wysyłanie ramki CONNECT do ' + url + ' z X-Guest-Id: ' + guestId + '...', 'log-out');
+            client.activate();
+        }
+
+        function subscribe() {
+            const dest = document.getElementById('destination').value;
+            const receiptId = 'sub-rcpt-' + Math.floor(Math.random() * 10000);
+            log('Wysyłanie ramki SUBSCRIBE do: ' + dest + '...', 'log-out');
+
+            client.watchForReceipt(receiptId, function (frame) {
+                log('POTWIERDZENIE Z SERWERA: Serwer formalnie zaakceptował subskrypcję ' + dest + ' [RECEIPT ' + receiptId + ']!', 'log-in');
+            });
+
+            try {
+                subscription = client.subscribe(dest, function (message) {
+                    log('ODEBRANO DANE na ' + dest + ': ' + message.body, 'log-in');
+                }, { receipt: receiptId });
+            } catch (err) {
+                log('Wyjątek subskrypcji: ' + err, 'log-err');
+            }
+        }
+
+        function updateUiConnected() {
+            const btn = document.getElementById('btnConnect');
+            btn.textContent = 'Rozłącz (DISCONNECT)';
+            btn.className = 'btn-disconnect';
+            document.getElementById('btnSubscribe').disabled = false;
+        }
+
+        function updateUiDisconnected() {
+            const btn = document.getElementById('btnConnect');
+            btn.textContent = 'Połącz (CONNECT)';
+            btn.className = 'btn-connect';
+            document.getElementById('btnSubscribe').disabled = true;
+        }
+    </script>
+</body>
+</html>

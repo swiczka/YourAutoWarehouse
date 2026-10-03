@@ -2,6 +2,8 @@ package io.swiczka.github.apiwarehouse.mapper;
 
 import io.swiczka.github.apiwarehouse.entity.Layout;
 import io.swiczka.github.apiwarehouse.layout.response.LayoutReadResponse;
+import io.swiczka.github.sharedcommon.dto.WarehouseLayoutDto;
+import io.swiczka.github.sharedcommon.events.LayoutLoadedEvent;
 import io.swiczka.github.sharedcommon.events.LayoutSavedEvent;
 
 public final class LayoutMapper {
@@ -54,6 +56,39 @@ public final class LayoutMapper {
         return new LayoutSavedEvent(
                 entity.getId(),
                 entity.getUserId(),
+                entity.getForkliftNumber(),
+                entity.getGridData() != null ?
+                        entity.getGridData().stream()
+                                .map(GridDataMapper::toEvent)
+                                .toList() : null
+        );
+    }
+
+    public static LayoutLoadedEvent toLoadedEvent(final Layout entity) {
+        if (entity == null) {
+            return null;
+        }
+
+        return new LayoutLoadedEvent(
+                entity.getId(),
+                entity.getUserId(),
+                entity.getForkliftNumber(),
+                entity.getGridData() != null ?
+                        entity.getGridData().stream()
+                                .map(GridDataMapper::toEvent)
+                                .toList() : null
+        );
+    }
+
+    public static WarehouseLayoutDto toSharedDto(final Layout entity) {
+        if (entity == null) {
+            return null;
+        }
+
+        return new WarehouseLayoutDto(
+                entity.getId(),
+                entity.getUserId(),
+                entity.getCreatedAt(),
                 entity.getForkliftNumber(),
                 entity.getGridData() != null ?
                         entity.getGridData().stream()

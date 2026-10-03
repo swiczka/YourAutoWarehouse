@@ -22,7 +22,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.time.Duration;
 import java.time.Instant;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -66,22 +68,35 @@ public class SimulationEngine {
     }
 
     private void assignPendingTasks(final SimulationLayout layout) {
+        if (layout.isMarkedToRemove()) {
+            return;
+        }
+
         final List<ForkliftTask> pendingTasks = taskRegistry.getByLayoutId(layout.getId()).stream()
                 .filter(task -> task.getStatus().equals(TaskStatus.PENDING))
+                .sorted(Comparator.comparing(ForkliftTask::getTaskId))
                 .toList();
 
+        if (pendingTasks.isEmpty()) {
+            return;
+        }
+
+        final List<Forklift> freeForklifts = forkliftRegistry.findFreeByLayoutId(layout.getId());
+        if (freeForklifts.isEmpty()) {
+            return;
+        }
+
         for (final ForkliftTask task : pendingTasks) {
-            final List<Forklift> freeForklifts = forkliftRegistry.findFreeByLayoutId(layout.getId());
-            if (freeForklifts.isEmpty()) {
+            final Forklift forklift = freeForklifts.getFirst();
+            final boolean assigned = assignTaskToForklift(forklift, task, layout);
+            if (assigned) {
+                // At most one forklift departs per simulation tick per layout to avoid stacking in the garage
                 break;
             }
-
-            final Forklift forklift = freeForklifts.getFirst();
-            assignTaskToForklift(forklift, task, layout);
         }
     }
 
-    private void assignTaskToForklift(
+    private boolean assignTaskToForklift(
             final Forklift forklift,
             final ForkliftTask task,
             final SimulationLayout layout
@@ -92,7 +107,7 @@ public class SimulationEngine {
         final List<Coordinate> pathToSource = AStar.findPath(start, source, layout);
         if (pathToSource.isEmpty() && !start.equals(source)) {
             log.warn("Cannot find path for forklift {} to task source {}", forklift.getId(), source);
-            return;
+            return false;
         }
 
         task.setStatus(TaskStatus.IN_PROGRESS);
@@ -107,6 +122,7 @@ public class SimulationEngine {
         forklift.setPath(steps);
 
         log.info("Assigned task {} to forklift {}. Path length: {}", task.getTaskId(), forklift.getId(), steps.size());
+        return true;
     }
 
     private void stepForklifts(final SimulationLayout layout) {
@@ -117,6 +133,7 @@ public class SimulationEngine {
                 continue;
             }
 
+            layout.touch();
             forklift.nextStep();
             log.info("Forklift {} reached {}, {}",
                     forklift.getId(),
@@ -237,6 +254,30 @@ public class SimulationEngine {
             for (int i = 0; i < missingCount; i++) {
                 final ForkliftCreateDto createDto = new ForkliftCreateDto(layout.getId(), layout.getUserId());
                 forkliftRegistry.add(createDto);
+            }
+        }
+    }
+
+    @Scheduled(fixedRate = 60000)
+    public void cleanupInactiveLayouts() {
+        for (final SimulationLayout layout : layoutCache.getAll()) {
+            final Long layoutId = layout.getId();
+
+            if (layout.isInactiveFor(Duration.ofMinutes(20))) {
+                layout.markForRemoval();
+                log.info("Layout id={} has been inactive for 20 minutes. Marked for removal.", layoutId);
+            }
+
+            if (layout.isMarkedToRemove()) {
+                final boolean hasActiveTasks = taskRegistry.hasActiveTasks(layoutId);
+                final boolean allFreeInGarage = forkliftRegistry.areAllForkliftsFreeInGarage(layoutId);
+
+                if (!hasActiveTasks && allFreeInGarage) {
+                    layoutCache.remove(layoutId);
+                    forkliftRegistry.removeByLayoutId(layoutId);
+                    taskRegistry.removeByLayoutId(layoutId);
+                    log.info("Evicted layout id={} from memory after graceful shutdown.", layoutId);
+                }
             }
         }
     }

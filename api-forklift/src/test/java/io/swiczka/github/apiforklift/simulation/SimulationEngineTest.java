@@ -110,4 +110,88 @@ class SimulationEngineTest {
         // then
         assertThat(task.getStatus()).isEqualTo(TaskStatus.COMPLETE);
     }
+
+    @Test
+    @DisplayName("should not assign pending tasks when layout is marked to remove")
+    void shouldNotAssignPendingTasksWhenLayoutIsMarkedToRemove() {
+        // given
+        final Long layoutId = 500L;
+        final SimulationLayout layout = new SimulationLayout(layoutId, UUID.randomUUID(), 2, Collections.emptyList());
+        layout.markForRemoval();
+        layoutCache.put(layout);
+
+        final ForkliftTaskCreateDto taskDto =
+                new ForkliftTaskCreateDto(888L, layoutId, 0, 0, 1, 1, TaskType.INBOUND);
+        final ForkliftTask task = taskRegistry.add(taskDto);
+
+        // when
+        simulationEngine.tick();
+
+        // then
+        assertThat(task.getStatus()).isEqualTo(TaskStatus.PENDING);
+        assertThat(task.getAssignedForkliftId()).isNull();
+    }
+
+    @Test
+    @DisplayName("should cleanup layout and forklifts when marked to remove and no active tasks")
+    void shouldCleanupMarkedToRemoveLayoutWhenNoActiveTasks() {
+        // given
+        final Long layoutId = 600L;
+        final SimulationLayout layout = new SimulationLayout(layoutId, UUID.randomUUID(), 2, Collections.emptyList());
+        layoutCache.put(layout);
+
+        // create forklifts in garage
+        simulationEngine.tick();
+        assertThat(forkliftRegistry.findByLayoutId(layoutId)).hasSize(2);
+
+        // mark layout to remove
+        layout.markForRemoval();
+
+        // when
+        simulationEngine.cleanupInactiveLayouts();
+
+        // then
+        assertThat(layoutCache.contains(layoutId)).isFalse();
+        assertThat(forkliftRegistry.findByLayoutId(layoutId)).isEmpty();
+        assertThat(taskRegistry.getByLayoutId(layoutId)).isEmpty();
+    }
+
+    @Test
+    @DisplayName("should assign at most one task per tick to stagger forklift departures")
+    void shouldAssignAtMostOneTaskPerTickToStaggerDepartures() throws Exception {
+        // given
+        final ObjectMapper mapper = new ObjectMapper();
+        final ClassPathResource resource = new ClassPathResource("data/sample_layout.json");
+        final SimulationLayout layout;
+        try (final java.io.InputStream is = resource.getInputStream()) {
+            layout = mapper.readValue(is, SimulationLayout.class);
+        }
+        layoutCache.put(layout);
+
+        final ForkliftTaskCreateDto taskDto1 =
+                new ForkliftTaskCreateDto(101L, layout.getId(), 0, 1, 2, 0, TaskType.INBOUND);
+        final ForkliftTaskCreateDto taskDto2 =
+                new ForkliftTaskCreateDto(102L, layout.getId(), 0, 1, 2, 0, TaskType.INBOUND);
+
+        final List<ForkliftTask> tasks = taskRegistry.add(List.of(taskDto1, taskDto2));
+        final ForkliftTask task1 = tasks.getFirst();
+        final ForkliftTask task2 = tasks.getLast();
+
+        // when
+        simulationEngine.tick();
+
+        // then
+        assertThat(task1.getStatus()).isEqualTo(TaskStatus.IN_PROGRESS);
+        assertThat(task1.getAssignedForkliftId()).isNotNull();
+        assertThat(task2.getStatus()).isEqualTo(TaskStatus.PENDING);
+        assertThat(task2.getAssignedForkliftId()).isNull();
+
+        // when
+        simulationEngine.tick();
+
+        // then
+        assertThat(task2.getStatus()).isEqualTo(TaskStatus.IN_PROGRESS);
+        assertThat(task2.getAssignedForkliftId()).isNotNull();
+        assertThat(task2.getAssignedForkliftId()).isNotEqualTo(task1.getAssignedForkliftId());
+    }
 }

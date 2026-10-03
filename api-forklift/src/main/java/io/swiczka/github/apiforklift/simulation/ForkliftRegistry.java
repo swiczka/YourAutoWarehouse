@@ -56,10 +56,26 @@ public class ForkliftRegistry {
         if (layoutId == null) {
             return Collections.emptyList();
         }
-        List<Forklift> layoutForklifts = this.findByLayoutId(layoutId);
+        final List<Forklift> layoutForklifts = this.findByLayoutId(layoutId);
         return layoutForklifts.stream()
                 .filter(Forklift::isFree)
                 .toList();
+    }
+
+    public boolean areAllForkliftsFreeInGarage(final Long layoutId) {
+        if (layoutId == null) {
+            return true;
+        }
+        final List<Forklift> layoutForklifts = findByLayoutId(layoutId);
+        return layoutForklifts.stream()
+                .allMatch(forklift -> forklift.isFree() && forklift.getX() == 0 && forklift.getY() == 0);
+    }
+
+    public void removeByLayoutId(final Long layoutId) {
+        if (layoutId == null) {
+            return;
+        }
+        this.forkliftsMap.entrySet().removeIf(entry -> layoutId.equals(entry.getValue().getLayoutId()));
     }
 
     public Collection<Forklift> getAll() {

@@ -8,6 +8,7 @@ import io.swiczka.github.apiwarehouse.exceptions.LayoutNotFoundException;
 import io.swiczka.github.apiwarehouse.layout.dto.GridDataDto;
 import io.swiczka.github.apiwarehouse.layout.response.LayoutIdReadResponse;
 import io.swiczka.github.sharedcommon.dto.LayoutOwnerDto;
+import io.swiczka.github.sharedcommon.dto.WarehouseLayoutDto;
 import io.swiczka.github.apiwarehouse.layout.response.LayoutReadResponse;
 import io.swiczka.github.apiwarehouse.mapper.GridDataMapper;
 import io.swiczka.github.apiwarehouse.mapper.LayoutMapper;
@@ -44,9 +45,10 @@ public class WarehouseLayoutService {
     }
 
     public LayoutReadResponse getLatestUserLayout(final UUID userId) {
-        return layoutDAO.findLatestByUserId(userId)
-                .map(LayoutMapper::toDto)
+        final Layout layout = layoutDAO.findLatestByUserId(userId)
                 .orElseThrow(() -> new LayoutNotFoundException(userId));
+        layoutEventProducer.sendLayoutLoaded(LayoutMapper.toLoadedEvent(layout));
+        return LayoutMapper.toDto(layout);
     }
 
     public LayoutReadResponse getLayoutById(final Long layoutId, final UUID userId) {
@@ -58,7 +60,14 @@ public class WarehouseLayoutService {
             throw new ForbiddenException("Access denied to layout with id " + layoutId);
         }
 
+        layoutEventProducer.sendLayoutLoaded(LayoutMapper.toLoadedEvent(layout));
         return LayoutMapper.toDto(layout);
+    }
+
+    public WarehouseLayoutDto getLayoutByIdInternal(final Long layoutId) {
+        final Layout layout = layoutDAO.findById(layoutId)
+                .orElseThrow(() -> new LayoutNotFoundException(layoutId));
+        return LayoutMapper.toSharedDto(layout);
     }
 
     public LayoutReadResponse updateForkliftNumber(final Long layoutId, final int forkliftNumber) {

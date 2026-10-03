@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
@@ -54,6 +55,7 @@ public class LayoutCache {
 
     public void put(final SimulationLayout layout) {
         if (layout != null && layout.getId() != null) {
+            layout.touch();
             activeLayouts.put(layout.getId(), layout);
         }
     }
@@ -63,6 +65,30 @@ public class LayoutCache {
             return Optional.empty();
         }
         return Optional.ofNullable(activeLayouts.get(layoutId));
+    }
+
+    public void touch(final Long layoutId) {
+        if (layoutId == null) {
+            return;
+        }
+        final SimulationLayout layout = activeLayouts.get(layoutId);
+        if (layout != null) {
+            layout.touch();
+        }
+    }
+
+    public void markOldLayoutsForUserAsRemovable(final UUID userId, final Long newLayoutId) {
+        if (userId == null) {
+            return;
+        }
+        for (final SimulationLayout layout : activeLayouts.values()) {
+            final boolean isSameUser = userId.equals(layout.getUserId());
+            final boolean isDifferentLayout = newLayoutId == null || !newLayoutId.equals(layout.getId());
+            if (isSameUser && isDifferentLayout) {
+                layout.markForRemoval();
+                log.info("Marked previous layout id={} for user={} as removable", layout.getId(), userId);
+            }
+        }
     }
 
     public Optional<SimulationLayout> remove(final Long layoutId) {

@@ -3,6 +3,7 @@ package io.swiczka.github.apiwarehouse.layout;
 import io.swiczka.github.apiwarehouse.layout.dto.GridDataDto;
 import io.swiczka.github.apiwarehouse.layout.response.LayoutIdReadResponse;
 import io.swiczka.github.sharedcommon.dto.LayoutOwnerDto;
+import io.swiczka.github.sharedcommon.dto.WarehouseLayoutDto;
 import io.swiczka.github.apiwarehouse.layout.response.LayoutReadResponse;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -54,6 +55,11 @@ public class WarehouseLayoutController {
             @RequestHeader("X-Guest-Id") final UUID guestId
     ) {
         return layoutService.getLayoutById(id, guestId);
+    }
+
+    @GetMapping("/layout/{id}/internal")
+    public WarehouseLayoutDto getLayoutByIdInternal(@PathVariable final Long id) {
+        return layoutService.getLayoutByIdInternal(id);
     }
 
     @PatchMapping("/layout/{id}/forklift")

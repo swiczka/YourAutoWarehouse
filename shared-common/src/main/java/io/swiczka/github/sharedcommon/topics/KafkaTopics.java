@@ -2,6 +2,7 @@ package io.swiczka.github.sharedcommon.topics;
 
 public final class KafkaTopics {
     public static final String LAYOUT_SAVED = "warehouse.layout-saved";
+    public static final String LAYOUT_LOADED = "warehouse.layout-loaded";
     public static final String INBOUND_ORDER_CREATED = "order.inbound-order-created";
     public static final String OUTBOUND_ORDER_CREATED = "order.outbound-order-created";
     public static final String FORKLIFT_LOCATION_UPDATED = "forklift.location-updated";
