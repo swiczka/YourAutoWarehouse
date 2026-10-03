@@ -44,14 +44,20 @@ public class WebSocketAuthInterceptor implements ChannelInterceptor {
             return message;
         }
 
-        if (StompCommand.CONNECT.equals(accessor.getCommand())) {
-            handleConnect(accessor);
-            return message;
-        }
+        try {
+            if (StompCommand.CONNECT.equals(accessor.getCommand())) {
+                handleConnect(accessor);
+                return message;
+            }
 
-        if (StompCommand.SUBSCRIBE.equals(accessor.getCommand())) {
-            handleSubscribe(accessor);
-            return message;
+            if (StompCommand.SUBSCRIBE.equals(accessor.getCommand())) {
+                handleSubscribe(accessor);
+                return message;
+            }
+        } catch (final Exception e) {
+            log.error("Exception in WebSocketAuthInterceptor preSend for command {}: {}",
+                    accessor.getCommand(), e.getMessage(), e);
+            throw e;
         }
 
         return message;
@@ -85,9 +91,13 @@ public class WebSocketAuthInterceptor implements ChannelInterceptor {
         }
 
         final String guestId = principal.getName();
+        log.info("Verifying subscription for guestId={}, destination={}, layoutId={}", guestId, destination, layoutId);
+
         final Optional<LayoutOwnerDto> owner = warehouseApiClient.getLayoutOwner(layoutId, guestId);
+        log.info("Layout owner retrieved from client: {}", owner);
 
         final boolean isOwner = owner
+                .filter(response -> response.userId() != null)
                 .map(response -> response.userId().toString().equals(guestId))
                 .orElse(false);
 
@@ -96,7 +106,7 @@ public class WebSocketAuthInterceptor implements ChannelInterceptor {
             throw new MessageDeliveryException("Access denied to layout " + layoutId);
         }
 
-        log.debug("SUBSCRIBE accepted: guestId={}, layoutId={}", guestId, layoutId);
+        log.info("SUBSCRIBE accepted: guestId={}, layoutId={}", guestId, layoutId);
     }
 
     private Long parseLayoutId(final String destination) {
