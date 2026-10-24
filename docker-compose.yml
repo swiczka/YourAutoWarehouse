@@ -35,11 +35,16 @@ services:
       context: .
       dockerfile: api-gateway/Dockerfile
     image: api-gateway:latest
+    depends_on:
+      api-warehouse:
+        condition: service_healthy
     environment:
       ORDER_HOST: api-order
       WAREHOUSE_HOST: api-warehouse
       FORKLIFT_HOST: api-forklift
       REDIS_HOST: redis
+      KAFKA_HOST: kafka-1
+      KAFKA_PORT: 9092
 
     ports:
       - "8080:8080"
@@ -65,6 +70,13 @@ services:
       - "8082:8082"
     networks:
       - yaw-network
+    healthcheck:
+      # image has no curl/wget - bash sends a raw HTTP request to the actuator through /dev/tcp
+      test: ["CMD", "bash", "-c", "exec 3<>/dev/tcp/localhost/8082 && printf 'GET /actuator/health HTTP/1.0\\r\\n\\r\\n' >&3 && grep -q '\"UP\"' <&3"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 20s
   api-order:
     container_name: api-order
     depends_on:

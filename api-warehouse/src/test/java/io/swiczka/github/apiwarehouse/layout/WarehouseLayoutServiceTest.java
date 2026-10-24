@@ -8,6 +8,7 @@ import io.swiczka.github.apiwarehouse.exceptions.LayoutNotFoundException;
 import io.swiczka.github.apiwarehouse.layout.dto.GridDataDto;
 import io.swiczka.github.apiwarehouse.layout.response.LayoutReadResponse;
 import io.swiczka.github.apiwarehouse.producers.LayoutEventProducer;
+import io.swiczka.github.sharedcommon.events.LayoutForkliftNumberChangedEvent;
 import io.swiczka.github.sharedcommon.helpers.Coordinate;
 import io.swiczka.github.sharedcommon.helpers.Direction;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,6 +29,8 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -147,7 +150,7 @@ class WarehouseLayoutServiceTest {
             ArgumentCaptor<Layout> captor = ArgumentCaptor.forClass(Layout.class);
 
             //when
-            LayoutReadResponse response = layoutService.updateForkliftNumber(TEST_LAYOUT_ID, newForkliftCount);
+            LayoutReadResponse response = layoutService.updateForkliftNumber(TEST_LAYOUT_ID, newForkliftCount, TEST_USER_ID);
 
             //then
             verify(layoutDAO).findById(TEST_LAYOUT_ID);
@@ -164,16 +167,50 @@ class WarehouseLayoutServiceTest {
         }
 
         @Test
+        @DisplayName("Should send forklift number changed event so the simulation can follow")
+        void updateForkliftNumber_sendsEvent(){
+            //given
+            when(layoutDAO.findById(TEST_LAYOUT_ID)).thenReturn(Optional.of(testLayout));
+            ArgumentCaptor<LayoutForkliftNumberChangedEvent> eventCaptor =
+                    ArgumentCaptor.forClass(LayoutForkliftNumberChangedEvent.class);
+
+            //when
+            layoutService.updateForkliftNumber(TEST_LAYOUT_ID, newForkliftCount, TEST_USER_ID);
+
+            //then
+            verify(layoutEventProducer).sendForkliftNumberChanged(eventCaptor.capture());
+            assertThat(eventCaptor.getValue().layoutId()).isEqualTo(TEST_LAYOUT_ID);
+            assertThat(eventCaptor.getValue().forkliftNumber()).isEqualTo(newForkliftCount);
+        }
+
+        @Test
         @DisplayName("Should throw LayoutNotFoundException when layout not found")
         void updateForkliftNumber_notFound(){
             //given
             when(layoutDAO.findById(TEST_LAYOUT_ID)).thenReturn(Optional.empty());
 
             //when then
-            assertThatThrownBy(() -> layoutService.updateForkliftNumber(TEST_LAYOUT_ID, newForkliftCount))
+            assertThatThrownBy(() -> layoutService.updateForkliftNumber(TEST_LAYOUT_ID, newForkliftCount, TEST_USER_ID))
                     .isInstanceOf(LayoutNotFoundException.class)
                     .hasMessageContaining(TEST_LAYOUT_ID.toString());
 
+        }
+
+        @Test
+        @DisplayName("Should throw ForbiddenException and change nothing when user is not the owner")
+        void updateForkliftNumber_forbidden(){
+            //given
+            final UUID otherUserId = UUID.fromString("660e8400-e29b-41d4-a716-446655440001");
+            when(layoutDAO.findById(TEST_LAYOUT_ID)).thenReturn(Optional.of(testLayout));
+
+            //when then
+            assertThatThrownBy(() -> layoutService.updateForkliftNumber(TEST_LAYOUT_ID, newForkliftCount, otherUserId))
+                    .isInstanceOf(ForbiddenException.class)
+                    .hasMessageContaining(TEST_LAYOUT_ID.toString());
+
+            //then - nothing saved, no event for the simulation
+            verify(layoutDAO, never()).save(any());
+            verify(layoutEventProducer, never()).sendForkliftNumberChanged(any());
         }
     }
 

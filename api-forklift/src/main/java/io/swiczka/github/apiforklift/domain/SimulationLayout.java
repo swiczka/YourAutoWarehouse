@@ -17,7 +17,8 @@ import java.util.stream.Collectors;
 public class SimulationLayout {
     private final Long id;
     private final UUID userId;
-    private final Integer forkliftNumber;
+    // volatile: written by the Kafka listener thread, read by the simulation tick thread
+    private volatile Integer forkliftNumber;
     private final List<SimulationGridData> simulationGridData;
     private final Map<Coordinate, SimulationGridData> cellIndex;
     private volatile Instant lastActivityAt;
@@ -55,6 +56,10 @@ public class SimulationLayout {
 
     public Integer getForkliftNumber() {
         return forkliftNumber;
+    }
+
+    public void setForkliftNumber(final Integer forkliftNumber) {
+        this.forkliftNumber = forkliftNumber;
     }
 
     public List<SimulationGridData> getGridData() {

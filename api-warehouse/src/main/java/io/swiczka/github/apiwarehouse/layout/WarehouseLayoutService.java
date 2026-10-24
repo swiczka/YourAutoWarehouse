@@ -9,6 +9,7 @@ import io.swiczka.github.apiwarehouse.layout.dto.GridDataDto;
 import io.swiczka.github.apiwarehouse.layout.response.LayoutIdReadResponse;
 import io.swiczka.github.sharedcommon.dto.LayoutOwnerDto;
 import io.swiczka.github.sharedcommon.dto.WarehouseLayoutDto;
+import io.swiczka.github.sharedcommon.events.LayoutForkliftNumberChangedEvent;
 import io.swiczka.github.apiwarehouse.layout.response.LayoutReadResponse;
 import io.swiczka.github.apiwarehouse.mapper.GridDataMapper;
 import io.swiczka.github.apiwarehouse.mapper.LayoutMapper;
@@ -70,11 +71,21 @@ public class WarehouseLayoutService {
         return LayoutMapper.toSharedDto(layout);
     }
 
-    public LayoutReadResponse updateForkliftNumber(final Long layoutId, final int forkliftNumber) {
+    public LayoutReadResponse updateForkliftNumber(final Long layoutId, final int forkliftNumber, final UUID userId) {
         final Layout layout = layoutDAO.findById(layoutId)
                 .orElseThrow(() -> new LayoutNotFoundException(layoutId));
+
+        final boolean isOwner = layout.getUserId().equals(userId);
+        if (!isOwner) {
+            throw new ForbiddenException("Access denied to layout with id " + layoutId);
+        }
+
         layout.setForkliftNumber(forkliftNumber);
         layoutDAO.save(layout);
+
+        layoutEventProducer.sendForkliftNumberChanged(
+                new LayoutForkliftNumberChangedEvent(layoutId, forkliftNumber)
+        );
         return LayoutMapper.toDto(layout);
     }
 

@@ -68,8 +68,9 @@ public class WarehouseLayoutController {
             @RequestParam
                 @Min(value = 1, message = "Forklift number must be between 1 and 12")
                 @Max(value = 12, message = "Forklift number must be between 1 and 12")
-            final int forkliftNumber
+            final int forkliftNumber,
+            @RequestHeader("X-Guest-Id") final UUID guestId
     ) {
-        return layoutService.updateForkliftNumber(id, forkliftNumber);
+        return layoutService.updateForkliftNumber(id, forkliftNumber, guestId);
     }
 }

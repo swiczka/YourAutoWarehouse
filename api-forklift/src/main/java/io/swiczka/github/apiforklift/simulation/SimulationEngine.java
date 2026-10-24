@@ -61,7 +61,7 @@ public class SimulationEngine {
     @Scheduled(fixedRate = 500)
     public void tick() {
         for (final SimulationLayout layout : layoutCache.getAll()) {
-            ensureForkliftsCreated(layout);
+            syncForkliftCount(layout);
             assignPendingTasks(layout);
             stepForklifts(layout);
         }
@@ -244,7 +244,11 @@ public class SimulationEngine {
         }
     }
 
-    private void ensureForkliftsCreated(final SimulationLayout layout) {
+    // Keeps the number of forklifts equal to layout.getForkliftNumber():
+    // - too few  -> new forklifts are created in the garage,
+    // - too many -> idle forklifts in the garage are removed; busy ones finish their task
+    //               and come back first, then a later tick removes them.
+    private void syncForkliftCount(final SimulationLayout layout) {
         final List<Forklift> existingForklifts = forkliftRegistry.findByLayoutId(layout.getId());
         final int targetCount = layout.getForkliftNumber() != null ? layout.getForkliftNumber() : 0;
         final int missingCount = targetCount - existingForklifts.size();
@@ -254,6 +258,17 @@ public class SimulationEngine {
             for (int i = 0; i < missingCount; i++) {
                 final ForkliftCreateDto createDto = new ForkliftCreateDto(layout.getId(), layout.getUserId());
                 forkliftRegistry.add(createDto);
+            }
+            return;
+        }
+
+        final int surplusCount = -missingCount;
+        if (surplusCount > 0) {
+            final List<Forklift> removed = forkliftRegistry.removeIdleInGarage(layout.getId(), surplusCount);
+            if (!removed.isEmpty()) {
+                log.info("Removed {} idle forklift(s) {} from layout id={}, {} still to remove after their tasks",
+                        removed.size(), removed.stream().map(Forklift::getId).toList(), layout.getId(),
+                        surplusCount - removed.size());
             }
         }
     }

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -87,5 +88,26 @@ public class ForkliftRegistry {
             return Optional.empty();
         }
         return Optional.ofNullable(this.forkliftsMap.remove(id));
+    }
+
+    /**
+     * Removes up to {@code count} forklifts of the layout that stand idle in the garage,
+     * newest (highest id) first. Busy or returning forklifts are never removed here.
+     *
+     * @return removed forklifts (may be fewer than {@code count})
+     */
+    public List<Forklift> removeIdleInGarage(final Long layoutId, final int count) {
+        if (layoutId == null || count <= 0) {
+            return Collections.emptyList();
+        }
+        final List<Forklift> toRemove = findByLayoutId(layoutId).stream()
+                .filter(Forklift::isInGarage)
+                .sorted(Comparator.comparing(Forklift::getId).reversed())
+                .limit(count)
+                .toList();
+        for (final Forklift forklift : toRemove) {
+            this.forkliftsMap.remove(forklift.getId());
+        }
+        return toRemove;
     }
 }

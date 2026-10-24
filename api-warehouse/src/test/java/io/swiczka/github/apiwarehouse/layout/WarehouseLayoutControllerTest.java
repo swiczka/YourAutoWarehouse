@@ -169,12 +169,13 @@ class WarehouseLayoutControllerTest {
             Integer newForklift = 5;
 
             //when
-            when(layoutService.updateForkliftNumber(expectedResponse.id(), newForklift))
+            when(layoutService.updateForkliftNumber(expectedResponse.id(), newForklift, TEST_USER_ID))
                     .thenReturn(expectedResponse);
 
             //then
             mockMvc.perform(patch("/api/warehouse/layout/1/forklift")
-                            .param("forkliftNumber", newForklift.toString()))
+                            .param("forkliftNumber", newForklift.toString())
+                            .header("X-Guest-Id", TEST_USER_ID.toString()))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.id").value(expectedResponse.id()))
                     .andExpect(jsonPath("$.forkliftNumber").value(newForklift));
@@ -188,8 +189,34 @@ class WarehouseLayoutControllerTest {
 
             //when then
             mockMvc.perform(patch("/api/warehouse/layout/1/forklift")
-                            .param("forkliftNumber", String.valueOf(badValue)))
+                            .param("forkliftNumber", String.valueOf(badValue))
+                            .header("X-Guest-Id", TEST_USER_ID.toString()))
                     .andExpect(status().isBadRequest());
+        }
+
+        @Test
+        @DisplayName("Should throw bad request when there is no Guest Id header")
+        void setForkliftNumber_noGuestIdHeader() throws Exception{
+            //given
+
+            //when then
+            mockMvc.perform(patch("/api/warehouse/layout/1/forklift")
+                            .param("forkliftNumber", "5"))
+                    .andExpect(status().isBadRequest());
+        }
+
+        @Test
+        @DisplayName("Should throw forbidden when user is not the owner of the layout")
+        void setForkliftNumber_forbidden() throws Exception{
+            //given
+            when(layoutService.updateForkliftNumber(1L, 5, TEST_USER_ID))
+                    .thenThrow(new ForbiddenException("Access denied to layout with id 1"));
+
+            //when then
+            mockMvc.perform(patch("/api/warehouse/layout/1/forklift")
+                            .param("forkliftNumber", "5")
+                            .header("X-Guest-Id", TEST_USER_ID.toString()))
+                    .andExpect(status().isForbidden());
         }
 
         @Test
@@ -198,12 +225,13 @@ class WarehouseLayoutControllerTest {
             //given
 
             //when
-            when(layoutService.updateForkliftNumber(1L, 5))
+            when(layoutService.updateForkliftNumber(1L, 5, TEST_USER_ID))
                     .thenThrow(LayoutNotFoundException.class);
 
             //then
             mockMvc.perform(patch("/api/warehouse/layout/1/forklift")
-                            .param("forkliftNumber", "5"))
+                            .param("forkliftNumber", "5")
+                            .header("X-Guest-Id", TEST_USER_ID.toString()))
                     .andExpect(status().isNotFound());
         }
 

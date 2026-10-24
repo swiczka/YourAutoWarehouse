@@ -3,6 +3,7 @@ package io.swiczka.github.apiforklift.consumer;
 import io.swiczka.github.apiforklift.domain.SimulationLayout;
 import io.swiczka.github.apiforklift.mapper.SimulationLayoutMapper;
 import io.swiczka.github.apiforklift.simulation.LayoutCache;
+import io.swiczka.github.sharedcommon.events.LayoutForkliftNumberChangedEvent;
 import io.swiczka.github.sharedcommon.events.LayoutLoadedEvent;
 import io.swiczka.github.sharedcommon.events.LayoutSavedEvent;
 import io.swiczka.github.sharedcommon.topics.KafkaTopics;
@@ -11,6 +12,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
+
+import java.util.Optional;
 
 @Component
 public class LayoutEventConsumer {
@@ -40,5 +43,21 @@ public class LayoutEventConsumer {
 
         final SimulationLayout layout = SimulationLayoutMapper.toSimulation(event);
         layoutCache.put(layout);
+    }
+
+    // Only updates the number - SimulationEngine adds or parks forklifts on its next tick.
+    // A layout that is not simulated right now gets the new number from the database
+    // with its next LayoutLoadedEvent, so it can be ignored here.
+    @KafkaListener(topics = KafkaTopics.LAYOUT_FORKLIFT_NUMBER_CHANGED, groupId = "forklift-service")
+    public void handleForkliftNumberChanged(final LayoutForkliftNumberChangedEvent event) {
+        log.info("Received LayoutForkliftNumberChangedEvent for layoutId={}, forkliftNumber={}",
+                event.layoutId(), event.forkliftNumber());
+        final Optional<SimulationLayout> layout = layoutCache.get(event.layoutId());
+        if (layout.isEmpty()) {
+            log.info("Layout id={} is not simulated right now, skipping forklift number change", event.layoutId());
+            return;
+        }
+        layout.get().setForkliftNumber(event.forkliftNumber());
+        layout.get().touch();
     }
 }

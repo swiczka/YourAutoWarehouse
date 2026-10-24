@@ -5,6 +5,7 @@ import io.swiczka.github.apiforklift.domain.Forklift;
 import io.swiczka.github.apiforklift.domain.ForkliftTask;
 import io.swiczka.github.apiforklift.domain.SimulationLayout;
 import io.swiczka.github.apiforklift.dto.ForkliftTaskCreateDto;
+import io.swiczka.github.apiforklift.enums.ForkliftStatus;
 import io.swiczka.github.apiforklift.enums.TaskStatus;
 import io.swiczka.github.sharedcommon.helpers.TaskType;
 import io.swiczka.github.apiforklift.producer.ForkliftLocationEventProducer;
@@ -193,5 +194,69 @@ class SimulationEngineTest {
         assertThat(task2.getStatus()).isEqualTo(TaskStatus.IN_PROGRESS);
         assertThat(task2.getAssignedForkliftId()).isNotNull();
         assertThat(task2.getAssignedForkliftId()).isNotEqualTo(task1.getAssignedForkliftId());
+    }
+
+    @Test
+    @DisplayName("should create new forklifts when forklift number is increased")
+    void shouldCreateForkliftsWhenNumberIncreased() {
+        // given
+        final Long layoutId = 200L;
+        final SimulationLayout layout = new SimulationLayout(layoutId, UUID.randomUUID(), 2, Collections.emptyList());
+        layoutCache.put(layout);
+        simulationEngine.tick();
+
+        // when
+        layout.setForkliftNumber(5);
+        simulationEngine.tick();
+
+        // then
+        assertThat(forkliftRegistry.findByLayoutId(layoutId)).hasSize(5);
+    }
+
+    @Test
+    @DisplayName("should remove idle forklifts from the garage when forklift number is decreased")
+    void shouldRemoveIdleForkliftsWhenNumberDecreased() {
+        // given
+        final Long layoutId = 201L;
+        final SimulationLayout layout = new SimulationLayout(layoutId, UUID.randomUUID(), 4, Collections.emptyList());
+        layoutCache.put(layout);
+        simulationEngine.tick();
+
+        // when
+        layout.setForkliftNumber(1);
+        simulationEngine.tick();
+
+        // then
+        assertThat(forkliftRegistry.findByLayoutId(layoutId)).hasSize(1);
+    }
+
+    @Test
+    @DisplayName("should keep busy forklifts until they are back in the garage")
+    void shouldKeepBusyForkliftsUntilTheyReturn() {
+        // given
+        final Long layoutId = 202L;
+        final SimulationLayout layout = new SimulationLayout(layoutId, UUID.randomUUID(), 2, Collections.emptyList());
+        layoutCache.put(layout);
+        simulationEngine.tick();
+        final List<Forklift> forklifts = forkliftRegistry.findByLayoutId(layoutId);
+        for (final Forklift forklift : forklifts) {
+            forklift.setStatus(ForkliftStatus.MOVING);
+        }
+
+        // when - both forklifts are busy
+        layout.setForkliftNumber(1);
+        simulationEngine.tick();
+
+        // then - nothing can be removed yet
+        assertThat(forkliftRegistry.findByLayoutId(layoutId)).hasSize(2);
+
+        // when - one forklift is back in the garage
+        forklifts.getFirst().setStatus(ForkliftStatus.IN_GARAGE);
+        simulationEngine.tick();
+
+        // then
+        final List<Forklift> remaining = forkliftRegistry.findByLayoutId(layoutId);
+        assertThat(remaining).hasSize(1);
+        assertThat(remaining.getFirst().getStatus()).isEqualTo(ForkliftStatus.MOVING);
     }
 }

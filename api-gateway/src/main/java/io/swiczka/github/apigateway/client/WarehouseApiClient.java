@@ -1,5 +1,6 @@
 package io.swiczka.github.apigateway.client;
 
+import io.swiczka.github.apigateway.exceptions.WarehouseApiException;
 import io.swiczka.github.sharedcommon.dto.LayoutOwnerDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,6 +10,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
+import org.springframework.web.client.RestClientException;
 
 import java.util.Optional;
 
@@ -50,10 +52,9 @@ public class WarehouseApiClient {
         } catch (final HttpClientErrorException.NotFound e) {
             log.info("Layout owner not found for layoutId={}", layoutId);
             return Optional.empty();
-        } catch (final Exception e) {
-            log.error("Failed to verify layout ownership for layoutId={}, guestId={}: {}",
-                    layoutId, guestId, e.getMessage());
-            return Optional.empty();
+        } catch (final RestClientException e) {
+            throw new WarehouseApiException(
+                    "Warehouse API call failed for layoutId=" + layoutId + ": " + e.getMessage(), e);
         }
     }
 }

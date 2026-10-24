@@ -1,6 +1,8 @@
 package io.swiczka.github.apigateway.stomp;
 
 import io.swiczka.github.apigateway.client.WarehouseApiClient;
+import io.swiczka.github.apigateway.exceptions.StompRequestRejectedException;
+import io.swiczka.github.apigateway.exceptions.WarehouseApiException;
 import io.swiczka.github.apigateway.helpers.GuestPrincipal;
 import io.swiczka.github.sharedcommon.dto.LayoutOwnerDto;
 import org.slf4j.Logger;
@@ -8,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
-import org.springframework.messaging.MessageDeliveryException;
 import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
@@ -54,9 +55,12 @@ public class WebSocketAuthInterceptor implements ChannelInterceptor {
                 handleSubscribe(accessor);
                 return message;
             }
-        } catch (final Exception e) {
-            log.error("Exception in WebSocketAuthInterceptor preSend for command {}: {}",
-                    accessor.getCommand(), e.getMessage(), e);
+        } catch (final StompRequestRejectedException e) {
+            // expected rejection - already logged as WARN where it was thrown
+            throw e;
+        } catch (final RuntimeException e) {
+            log.error("Unexpected exception in WebSocketAuthInterceptor preSend for command {}",
+                    accessor.getCommand(), e);
             throw e;
         }
 
@@ -67,7 +71,7 @@ public class WebSocketAuthInterceptor implements ChannelInterceptor {
         final String guestId = accessor.getFirstNativeHeader(GUEST_ID_HEADER);
         if (guestId == null || guestId.isBlank()) {
             log.warn("WebSocket CONNECT rejected: missing {} header", GUEST_ID_HEADER);
-            throw new MessageDeliveryException("Missing " + GUEST_ID_HEADER + " header");
+            throw new StompRequestRejectedException("Missing " + GUEST_ID_HEADER + " header");
         }
         accessor.setUser(new GuestPrincipal(guestId));
         log.debug("WebSocket CONNECT accepted for guestId={}", guestId);
@@ -87,13 +91,20 @@ public class WebSocketAuthInterceptor implements ChannelInterceptor {
         final GuestPrincipal principal = (GuestPrincipal) accessor.getUser();
         if (principal == null) {
             log.warn("SUBSCRIBE rejected: no authenticated user for destination={}", destination);
-            throw new MessageDeliveryException("Not authenticated");
+            throw new StompRequestRejectedException("Not authenticated");
         }
 
         final String guestId = principal.getName();
         log.info("Verifying subscription for guestId={}, destination={}, layoutId={}", guestId, destination, layoutId);
 
-        final Optional<LayoutOwnerDto> owner = warehouseApiClient.getLayoutOwner(layoutId, guestId);
+        final Optional<LayoutOwnerDto> owner;
+        try {
+            owner = warehouseApiClient.getLayoutOwner(layoutId, guestId);
+        } catch (final WarehouseApiException e) {
+            log.warn("SUBSCRIBE rejected: could not verify owner of layoutId={} for guestId={}: {}",
+                    layoutId, guestId, e.getMessage());
+            throw new StompRequestRejectedException("Could not verify access to layout " + layoutId);
+        }
         log.info("Layout owner retrieved from client: {}", owner);
 
         final boolean isOwner = owner
@@ -103,7 +114,7 @@ public class WebSocketAuthInterceptor implements ChannelInterceptor {
 
         if (!isOwner) {
             log.warn("SUBSCRIBE rejected: guestId={} is not the owner of layoutId={}", guestId, layoutId);
-            throw new MessageDeliveryException("Access denied to layout " + layoutId);
+            throw new StompRequestRejectedException("Access denied to layout " + layoutId);
         }
 
         log.info("SUBSCRIBE accepted: guestId={}, layoutId={}", guestId, layoutId);
